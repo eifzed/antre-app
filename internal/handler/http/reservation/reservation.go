@@ -10,17 +10,17 @@ import (
 	rsv "github.com/eifzed/antre-app/internal/entity/reservation"
 )
 
-type rsvHandler struct {
-	ReservationUC *rsvUC.Reservation
+type RsvHandler struct {
+	ReservationUC rsvUC.Reservation
 }
 
-func NewReservationHandler() *rsvHandler {
-	return &rsvHandler{}
+func NewReservationHandler(rsvHandler *RsvHandler) *RsvHandler {
+	return rsvHandler
 }
 
-func (h *rsvHandler) GetReservationByID(w http.ResponseWriter, r *http.Request) {
+func (h *RsvHandler) GetReservationByID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	result, err := GetReservationByIDUC(ctx, 123)
+	result, err := h.ReservationUC.GetReservationByID(ctx, 123)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
