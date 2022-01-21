@@ -2,7 +2,7 @@ package handler
 
 import "net/http"
 
-type Handler struct {
+type HttpHandler struct {
 	ReservationHandler rsvHandler
 }
 

@@ -6,7 +6,7 @@ func getRoute(m *modules) *mux.Router {
 	router := newRouter().PathPrefix("/v1")
 
 	antreRouter := router.PathPrefix("/antre").Subrouter()
-	antreRouter.HandleFunc("/reservations", m.handler.ReservationHandler.GetReservationByID).Methods("GET")
+	antreRouter.HandleFunc("/reservations/{id}", m.httpHandler.ReservationHandler.GetReservationByID).Methods("GET")
 	return antreRouter
 }
 func newRouter() *mux.Router {

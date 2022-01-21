@@ -19,5 +19,11 @@ func NewDBConnection(conn *db.Connection) *Conn {
 }
 
 func (con *Conn) GetReservationByID(ctx context.Context, rsvID int64) (*rsv.TrxReservation, error) {
-	return nil, nil
+	data := &rsv.TrxReservation{}
+	session := con.DB.Slave.Context(ctx).Table("ant_trx_reservation")
+	_, err := session.Where("reservation_id = ?", rsvID).Get(data)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }

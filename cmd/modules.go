@@ -5,7 +5,7 @@ import (
 )
 
 type modules struct {
-	handler handler.Handler
+	httpHandler handler.HttpHandler
 }
 
 func newModules(mod modules) *modules {
