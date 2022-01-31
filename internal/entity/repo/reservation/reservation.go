@@ -8,8 +8,27 @@ import (
 
 type Reservation interface {
 	reservation
+	hstReservation
+	user
 }
 
 type reservation interface {
 	GetReservationByID(ctx context.Context, rsvID int64) (*rsv.TrxReservation, error)
+	InsertTrxReservation(ctx context.Context, reservation *rsv.TrxReservation) error
+	UpdateTrxReservationByID(ctx context.Context, rsvID int64, reservation *rsv.TrxReservation) error
+}
+
+type user interface {
+	GetUserByEmail(ctx context.Context, email string) (*rsv.User, error)
+	GetUserByUserID(ctx context.Context, userID int64) (*rsv.User, error)
+	InsertUser(ctx context.Context, userParam *rsv.User) error
+	UpdateUserByUserID(ctx context.Context, userID int64, userParam *rsv.User) error
+	DeleteUserByUserID(ctx context.Context, userID int64) error
+}
+
+type hstReservation interface {
+	GetHstReservationByRsvID(ctx context.Context, rsvID int64) (*rsv.HstReservation, error)
+	GetHstReservationByHstID(ctx context.Context, hstReservationID int64) (*rsv.HstReservation, error)
+	InsertHstReservation(ctx context.Context, hstReservation *rsv.HstReservation) error
+	UpdateHstReservationByHstID(ctx context.Context, hstReservationID int64, hstReservation *rsv.HstReservation) error
 }

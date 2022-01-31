@@ -91,8 +91,14 @@ func RespondOK(ctx context.Context, w http.ResponseWriter) {
 	sendResponseJSONData(w, nil, http.StatusOK, &Message{Message: "OK"})
 }
 
-func RespondError(ctx context.Context, w http.ResponseWriter, err error) error {
+func RespondDefaultError(ctx context.Context, w http.ResponseWriter, err error) error {
 	//TODO: handle uding custom error
 	_, newErr := sendResponseJSONData(w, nil, http.StatusInternalServerError, &Message{Message: err.Error()})
+	return newErr
+}
+
+func RespondError(ctx context.Context, w http.ResponseWriter, errorCode int, message string) error {
+	//TODO: handle uding custom error
+	_, newErr := sendResponseJSONData(w, nil, errorCode, &Message{Message: message})
 	return newErr
 }

@@ -5,6 +5,7 @@ import (
 
 	db "github.com/eifzed/antre-app/internal/entity/database"
 	rsv "github.com/eifzed/antre-app/internal/entity/reservation"
+	"github.com/eifzed/antre-app/lib/common/databaseerr"
 )
 
 type Conn struct {
@@ -26,4 +27,28 @@ func (con *Conn) GetReservationByID(ctx context.Context, rsvID int64) (*rsv.TrxR
 		return nil, err
 	}
 	return data, nil
+}
+
+func (con *Conn) InsertTrxReservation(ctx context.Context, reservation *rsv.TrxReservation) error {
+	session := con.DB.Slave.Context(ctx).Table("ant_trx_reservation")
+	count, err := session.Insert(&reservation)
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return databaseerr.ErrorNoInsert
+	}
+	return nil
+}
+
+func (con *Conn) UpdateTrxReservationByID(ctx context.Context, rsvID int64, reservation *rsv.TrxReservation) error {
+	session := con.DB.Slave.Context(ctx).Table("ant_trx_reservation")
+	count, err := session.Where("reservation_id = ?", rsvID).Update(&reservation)
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return databaseerr.ErrorNoInsert
+	}
+	return nil
 }

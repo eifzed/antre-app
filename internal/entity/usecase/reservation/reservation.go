@@ -12,4 +12,5 @@ type Reservation interface {
 
 type reservation interface {
 	GetReservationByID(ctx context.Context, rsvID int64) (*rsv.TrxReservation, error)
+	RegisterReservation(ctx context.Context, resrvation *rsv.TrxReservation) error
 }

@@ -16,5 +16,29 @@ func NewReservationUC(resrvation *ReservationUC) *ReservationUC {
 }
 
 func (uc *ReservationUC) GetReservationByID(ctx context.Context, rsvID int64) (*rsv.TrxReservation, error) {
+	// TODO: get user detail from context
 	return uc.ReservationDB.GetReservationByID(ctx, rsvID)
+}
+
+func (uc *ReservationUC) RegisterReservation(ctx context.Context, reservation *rsv.TrxReservation) error {
+	// TODO: get user detail from context
+	err := uc.ReservationDB.InsertTrxReservation(ctx, reservation)
+	if err != nil {
+		return err
+	}
+
+	hstReservation := &rsv.HstReservation{
+		ReservationID:   reservation.ReservationID,
+		CustomerID:      reservation.CustomerID,
+		ShopID:          reservation.ShopID,
+		ReservationTime: reservation.ReservationTime,
+		ReservationType: reservation.ReservationType,
+		StatusID:        reservation.StatusID,
+		CustomerNote:    reservation.CustomerNote,
+		ShopNote:        reservation.ShopNote,
+		UpdaterID:       reservation.CustomerID, // TODO: get from context
+		Reason:          "New Reservation",
+	}
+	uc.ReservationDB.InsertHstReservation(ctx, hstReservation)
+	return nil
 }
