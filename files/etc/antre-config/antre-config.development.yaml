@@ -1,0 +1,9 @@
+server:
+  name: "antre-app"
+  http:
+    address: ":9999"
+  debug: 0
+  url: "http://localhost:9999"
+
+toggle:
+  enable_something: true

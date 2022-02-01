@@ -1,0 +1,65 @@
+package config
+
+import (
+	"encoding/json"
+	"io/ioutil"
+	"log"
+	"os"
+
+	xdb "github.com/eifzed/antre-app/lib/database/xorm"
+)
+
+type SecreteVault struct {
+	Data     *DataVault `json:"data"`
+	Metadata *Metadata  `json:"metadata"`
+}
+
+type DataVault struct {
+	DBMaster       *xdb.Config     `json:"db_master"`
+	DBSlave        *xdb.Config     `json:"db_slave"`
+	JWTCertificate *JWTCertificate `json:"jwt_certificate"`
+}
+
+type Metadata struct {
+	CreatedTime  string  `json:"created_time"`
+	Destroyed    bool    `json:"destroyed"`
+	Version      float32 `json:"version"`
+	DeletionTime string  `json:"deletion_time"`
+}
+
+func GetSecretes() *SecreteVault {
+	env := "production"
+	vaultPath := "/etc/antre-secrete/"
+
+	if IsDevelopment() {
+		dir, _ := os.Getwd()
+		env = "development"
+		vaultPath = dir + "/files" + "/etc/antre-secrete/"
+	}
+	vaultPath = vaultPath + "antre-secrete" + "." + env + ".json"
+	vaultFile, err := os.Open(vaultPath)
+	if err != nil {
+		log.Fatalln("Path fault not found:", err)
+	}
+	configByte, err := ioutil.ReadAll(vaultFile)
+	if err != nil {
+		log.Fatalln("Path fault not found:", err)
+	}
+	cfgVault := &SecreteVault{}
+	err = json.Unmarshal(configByte, cfgVault)
+	if err != nil {
+		log.Fatalln("Failed get vault config:", err)
+	}
+	if cfgVault == nil {
+		log.Fatalln("Failed config vault nil")
+	}
+	if cfgVault.Data == nil {
+		log.Fatalln("Failed config vault nil on data")
+	}
+	return cfgVault
+}
+
+func IsDevelopment() bool {
+	isLocal := os.Getenv("ISLOCAL")
+	return isLocal == "1"
+}

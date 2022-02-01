@@ -3,12 +3,14 @@ package reservation
 import (
 	"context"
 
+	"github.com/eifzed/antre-app/internal/config"
 	rsvRepo "github.com/eifzed/antre-app/internal/entity/repo/reservation"
 	rsv "github.com/eifzed/antre-app/internal/entity/reservation"
 )
 
 type ReservationUC struct {
 	ReservationDB rsvRepo.Reservation
+	Config        *config.Config
 }
 
 func NewReservationUC(resrvation *ReservationUC) *ReservationUC {

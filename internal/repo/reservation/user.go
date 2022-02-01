@@ -3,13 +3,13 @@ package reservation
 import (
 	"context"
 
-	rsv "github.com/eifzed/antre-app/internal/entity/reservation"
+	"github.com/eifzed/antre-app/internal/entity/auth"
 	"github.com/eifzed/antre-app/lib/common/databaseerr"
 )
 
-func (conn *Conn) GetUserByEmail(ctx context.Context, email string) (*rsv.User, error) {
+func (conn *Conn) GetUserByEmail(ctx context.Context, email string) (*auth.User, error) {
 	session := conn.DB.Slave.Table("ant_mst_user")
-	user := rsv.User{}
+	user := auth.User{}
 	has, err := session.Where("email = ?", email).Get(&user)
 	if err != nil {
 		return nil, err
@@ -20,9 +20,9 @@ func (conn *Conn) GetUserByEmail(ctx context.Context, email string) (*rsv.User, 
 	return &user, nil
 }
 
-func (conn *Conn) GetUserByUserID(ctx context.Context, userID int64) (*rsv.User, error) {
+func (conn *Conn) GetUserByUserID(ctx context.Context, userID int64) (*auth.User, error) {
 	session := conn.DB.Slave.Context(ctx).Table("ant_mst_user")
-	user := rsv.User{}
+	user := auth.User{}
 	has, err := session.Where("user_id = ?", userID).Get(&user)
 	if err != nil {
 		return nil, err
@@ -33,7 +33,7 @@ func (conn *Conn) GetUserByUserID(ctx context.Context, userID int64) (*rsv.User,
 	return &user, nil
 }
 
-func (conn *Conn) InsertUser(ctx context.Context, userParam *rsv.User) error {
+func (conn *Conn) InsertUser(ctx context.Context, userParam *auth.User) error {
 	session := conn.DB.Master.Context(ctx).Table("ant_mst_user")
 	count, err := session.Insert(userParam)
 	if err != nil {
@@ -46,7 +46,7 @@ func (conn *Conn) InsertUser(ctx context.Context, userParam *rsv.User) error {
 
 }
 
-func (conn *Conn) UpdateUserByUserID(ctx context.Context, userID int64, userParam *rsv.User) error {
+func (conn *Conn) UpdateUserByUserID(ctx context.Context, userID int64, userParam *auth.User) error {
 	session := conn.DB.Master.Context(ctx).Table("ant_mst_user")
 	count, err := session.Where("user_id = ?", userID).Update(userParam)
 	if err != nil {
@@ -60,7 +60,7 @@ func (conn *Conn) UpdateUserByUserID(ctx context.Context, userID int64, userPara
 
 func (conn *Conn) DeleteUserByUserID(ctx context.Context, userID int64) error {
 	session := conn.DB.Master.Context(ctx).Table("ant_mst_user")
-	count, err := session.Where("user_id = ?", userID).Delete(&rsv.User{})
+	count, err := session.Where("user_id = ?", userID).Delete(&auth.User{})
 	if err != nil {
 		return err
 	}

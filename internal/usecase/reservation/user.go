@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 
-	rsv "github.com/eifzed/antre-app/internal/entity/reservation"
+	"github.com/eifzed/antre-app/internal/entity/auth"
 	"github.com/eifzed/antre-app/lib/common/databaseerr"
 )
 
-func (uc *ReservationUC) RegisterNewUser(ctx context.Context, params rsv.User) error {
+func (uc *ReservationUC) RegisterNewUser(ctx context.Context, params auth.User) error {
 	_, err := uc.ReservationDB.GetUserByEmail(ctx, params.Email)
 	if err != nil && !errors.Is(err, databaseerr.ErrorDataNotFound) {
 		return err

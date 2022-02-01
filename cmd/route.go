@@ -1,19 +1,38 @@
 package main
 
-import "github.com/gorilla/mux"
+import (
+	"net/http"
 
-func getRoute(m *modules) *mux.Router {
-	router := newRouter().PathPrefix("/v1")
+	"github.com/eifzed/antre-app/lib/utility/urlpath"
+	"github.com/go-chi/chi"
+)
 
-	antreRouter := router.PathPrefix("/antre").Subrouter()
-	antreRouter.HandleFunc("/reservations/{id}", m.httpHandler.ReservationHandler.GetReservationByID).Methods("GET")
+func getRoute(m *modules) *chi.Mux {
+	router := chi.NewRouter()
+	path := urlpath.New("")
+	router.Route("/v1", func(v1 chi.Router) {
+		v1.Group(func(auth chi.Router) {
+			path.Group("/auth", func(authRoute urlpath.Routes) {
+				auth.Post("/register", m.httpHandler.AuthHandler.RegisterNewAccount)
+			})
+		})
+		v1.Group(func(antre chi.Router) {
+			antre.Use(authenticate)
+
+			path.Group("/reservations", func(reservationRoute urlpath.Routes) {
+				antre.Get("/{id}", m.httpHandler.ReservationHandler.GetReservationByID)
+			})
+		})
+
+	})
 
 	// user
-	antreRouter.HandleFunc("/user/{id}", m.httpHandler.ReservationHandler.GetReservationByID).Methods("POST")
-	return antreRouter
+	return router
 }
-func newRouter() *mux.Router {
-	r := mux.NewRouter()
-	//TODO:Add Middleware
-	return r
+func authenticate(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		// TODO: get user detail from context
+		next.ServeHTTP(rw, r.WithContext(ctx))
+	})
 }

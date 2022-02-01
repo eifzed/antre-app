@@ -3,6 +3,7 @@ package reservation
 import (
 	"context"
 
+	"github.com/eifzed/antre-app/internal/entity/auth"
 	rsv "github.com/eifzed/antre-app/internal/entity/reservation"
 )
 
@@ -19,10 +20,10 @@ type reservation interface {
 }
 
 type user interface {
-	GetUserByEmail(ctx context.Context, email string) (*rsv.User, error)
-	GetUserByUserID(ctx context.Context, userID int64) (*rsv.User, error)
-	InsertUser(ctx context.Context, userParam *rsv.User) error
-	UpdateUserByUserID(ctx context.Context, userID int64, userParam *rsv.User) error
+	GetUserByEmail(ctx context.Context, email string) (*auth.User, error)
+	GetUserByUserID(ctx context.Context, userID int64) (*auth.User, error)
+	InsertUser(ctx context.Context, userParam *auth.User) error
+	UpdateUserByUserID(ctx context.Context, userID int64, userParam *auth.User) error
 	DeleteUserByUserID(ctx context.Context, userID int64) error
 }
 
