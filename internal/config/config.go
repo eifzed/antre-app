@@ -11,10 +11,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type JWTCertificate struct {
-	PublicKey  string `yaml:"public_key"`
-	PrivateKey string `yaml:"client_key"`
-}
 type HTTP struct {
 	Address        string `yaml:"address"`
 	WriteTimeout   int    `yaml:"write_timeout"`

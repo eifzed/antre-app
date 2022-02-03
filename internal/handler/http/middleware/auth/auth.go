@@ -25,6 +25,10 @@ func NewAuthModule(module *AuthModule) *AuthModule {
 	return module
 }
 
+var (
+	roles = []jwt.Role{{ID: 123, Name: "dev"}}
+)
+
 func (m *AuthModule) AuthHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -34,16 +38,31 @@ func (m *AuthModule) AuthHandler(next http.Handler) http.Handler {
 			authHandlerError(ctx, rw, r, err)
 		}
 		fmt.Println(jwtToken)
+		userPayload, err := jwt.DecodeToken(jwtToken, m.JWTCertificate.PublicKey)
+		if err != nil {
+			authHandlerError(ctx, rw, r, err)
+		}
 
+		if !isUserAuthorized(userPayload.Roles, roles) {
+			authHandlerError(ctx, rw, r, errUnauthorized)
+			return
+		}
+		next.ServeHTTP(rw, r)
 	})
 }
 
-func validateJWTToken(token string, publicKey string) ([]byte, error) {
-	tokenArray := strings.Split(token, ".")
-	if len(tokenArray) != 3 {
-		return nil, errInvalidToken
+func isUserAuthorized(userRoles []jwt.Role, authorizedRoles []jwt.Role) bool {
+	if len(userRoles) == 0 || len(authorizedRoles) == 0 {
+		return false
 	}
-	return nil, nil
+	for _, user := range userRoles {
+		for _, auth := range authorizedRoles {
+			if user.ID == auth.ID {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func GetBearerToken(token string) (string, error) {

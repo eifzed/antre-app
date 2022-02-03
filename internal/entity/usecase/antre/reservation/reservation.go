@@ -6,7 +6,7 @@ import (
 	rsv "github.com/eifzed/antre-app/internal/entity/reservation"
 )
 
-type Reservation interface {
+type ReservationUCInterface interface {
 	reservation
 }
 

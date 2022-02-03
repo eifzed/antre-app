@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/eifzed/antre-app/internal/entity/reservation"
-	rsvUC "github.com/eifzed/antre-app/internal/entity/usecase/reservation"
+	rsvUC "github.com/eifzed/antre-app/internal/entity/usecase/antre/reservation"
 
 	"github.com/eifzed/antre-app/internal/config"
 	"github.com/eifzed/antre-app/lib/common/commonwriter"
@@ -13,7 +13,7 @@ import (
 )
 
 type RsvHandler struct {
-	ReservationUC rsvUC.Reservation
+	ReservationUC rsvUC.ReservationUCInterface
 	Config        *config.Config
 }
 

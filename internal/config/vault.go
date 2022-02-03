@@ -7,6 +7,7 @@ import (
 	"os"
 
 	xdb "github.com/eifzed/antre-app/lib/database/xorm"
+	"github.com/eifzed/antre-app/lib/utility/jwt"
 )
 
 type SecreteVault struct {
@@ -15,9 +16,9 @@ type SecreteVault struct {
 }
 
 type DataVault struct {
-	DBMaster       *xdb.Config     `json:"db_master"`
-	DBSlave        *xdb.Config     `json:"db_slave"`
-	JWTCertificate *JWTCertificate `json:"jwt_certificate"`
+	DBMaster       *xdb.Config         `json:"db_master"`
+	DBSlave        *xdb.Config         `json:"db_slave"`
+	JWTCertificate *jwt.JWTCertificate `json:"jwt_certificate"`
 }
 
 type Metadata struct {

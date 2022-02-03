@@ -3,14 +3,18 @@ package handler
 import "net/http"
 
 type HttpHandler struct {
-	ReservationHandler rsvHandler
-	AuthHandler        authHandler
+	ReservationHandler rsvHandlerInterface
+	AntreHandler       antreHandlerInterface
 }
 
-type rsvHandler interface {
+type rsvHandlerInterface interface {
 	GetReservationByID(w http.ResponseWriter, r *http.Request)
 }
 
-type authHandler interface {
+type antreHandlerInterface interface {
 	RegisterNewAccount(w http.ResponseWriter, r *http.Request)
+}
+
+type AuthModuleInterface interface {
+	AuthHandler(next http.Handler) http.Handler
 }

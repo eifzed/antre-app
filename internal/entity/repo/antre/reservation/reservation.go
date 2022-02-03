@@ -10,7 +10,6 @@ import (
 type Reservation interface {
 	reservation
 	hstReservation
-	user
 }
 
 type reservation interface {

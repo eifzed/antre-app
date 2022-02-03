@@ -8,6 +8,7 @@ import (
 type modules struct {
 	httpHandler *handler.HttpHandler
 	Config      *config.Config
+	AuthModule  handler.AuthModuleInterface
 }
 
 func newModules(mod modules) *modules {

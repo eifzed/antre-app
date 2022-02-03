@@ -1,11 +1,23 @@
-package reservation
+package antre
 
 import (
 	"context"
 
 	"github.com/eifzed/antre-app/internal/entity/auth"
+	db "github.com/eifzed/antre-app/internal/entity/database"
 	"github.com/eifzed/antre-app/lib/common/databaseerr"
 )
+
+type Conn struct {
+	DB *db.Connection
+	// Gocrypt *gocrypt.Option
+}
+
+func NewDBConnection(conn *db.Connection) *Conn {
+	return &Conn{
+		DB: conn,
+	}
+}
 
 func (conn *Conn) GetUserByEmail(ctx context.Context, email string) (*auth.User, error) {
 	session := conn.DB.Slave.Table("ant_mst_user")
