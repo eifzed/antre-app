@@ -12,6 +12,7 @@ require (
 	github.com/go-chi/chi v1.5.4
 	github.com/gorilla/schema v1.2.0
 	github.com/labstack/gommon v0.3.1
+	github.com/pkg/errors v0.8.1
 	github.com/prometheus/common v0.2.0
 	gopkg.in/yaml.v2 v2.2.3
 	xorm.io/builder v0.3.6 // indirect

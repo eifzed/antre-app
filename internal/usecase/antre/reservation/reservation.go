@@ -6,11 +6,13 @@ import (
 	"github.com/eifzed/antre-app/internal/config"
 	rsvRepo "github.com/eifzed/antre-app/internal/entity/repo/antre/reservation"
 	rsv "github.com/eifzed/antre-app/internal/entity/reservation"
+	db "github.com/eifzed/antre-app/lib/database/xorm"
 )
 
 type ReservationUC struct {
 	ReservationDB rsvRepo.Reservation
 	Config        *config.Config
+	Transaction   *db.DBTransaction
 }
 
 func NewReservationUC(resrvation *ReservationUC) *ReservationUC {

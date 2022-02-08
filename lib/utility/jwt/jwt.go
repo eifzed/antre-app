@@ -16,27 +16,28 @@ import (
 )
 
 type JWTCertificate struct {
-	PublicKey  string
-	PrivateKey string
+	PublicKey  string `json:"public_key"`
+	PrivateKey string `json:"private_key"`
 }
 
 type RouteRoles struct {
-	Roles []Role
+	Roles []Role `yaml:"roles"`
 }
 
 type Role struct {
-	ID   int64
-	Name string
+	ID   int64  `yaml:"id" json:"id" xorm:"role_id"`
+	Name string `yaml:"name" json:"name" xorm:"role_name"`
 }
 
 type JWTPayload struct {
-	UserID        int64
-	Name          string
-	Email         string
-	Username      string
-	Roles         []Role
-	GeneratedUnix int64
-	ExpiredUnix   int64
+	UserID         int64
+	Name           string
+	Email          string
+	Username       string
+	Roles          []Role
+	PasswordHashed string
+	GeneratedUnix  int64
+	ExpiredUnix    int64
 }
 
 type JWTHeader struct {
@@ -86,7 +87,6 @@ func GenerateToken(payload JWTPayload, privateKey string, expiredAfterMinutes in
 	d := h.Sum(nil)
 
 	signedData, err := rsa.SignPKCS1v15(rand.Reader, parsedPrivateKey, crypto.SHA256, d)
-	fmt.Println(signedData)
 	if err != nil {
 		return "", errSigning
 	}

@@ -6,13 +6,15 @@ import (
 
 	"github.com/eifzed/antre-app/internal/config"
 	rsvUC "github.com/eifzed/antre-app/internal/usecase/antre/reservation"
-	"github.com/eifzed/antre-app/lib/utility/jwt"
 
 	"github.com/eifzed/antre-app/internal/handler"
 	antreHandler "github.com/eifzed/antre-app/internal/handler/http/antre"
 	rsvHandler "github.com/eifzed/antre-app/internal/handler/http/antre/reservation"
 	"github.com/eifzed/antre-app/internal/handler/http/middleware/auth"
+	antreRepo "github.com/eifzed/antre-app/internal/repo/antre"
+	rsvRepo "github.com/eifzed/antre-app/internal/repo/antre/reservation"
 	antreUC "github.com/eifzed/antre-app/internal/usecase/antre"
+	db "github.com/eifzed/antre-app/lib/database/xorm"
 	_ "github.com/lib/pq"
 )
 
@@ -27,22 +29,28 @@ func main() {
 		log.Fatal(err)
 	}
 	cfg.Secretes = secrete
-	rsvConn, err := createRsvDBConnection(cfg.Secretes.Data.DBMaster.DSN, cfg.Secretes.Data.DBSlave.DSN)
+	rsvConn, err := createDBConnection(cfg.Secretes.Data.DBMaster.DSN, cfg.Secretes.Data.DBSlave.DSN)
 	if err != nil {
 		log.Fatal(err)
 	}
-	antreConn, err := createAntreDBConnection(cfg.Secretes.Data.DBMaster.DSN, cfg.Secretes.Data.DBSlave.DSN)
+	antreConn, err := createDBConnection(cfg.Secretes.Data.DBMaster.DSN, cfg.Secretes.Data.DBSlave.DSN)
 	if err != nil {
 		log.Fatal(err)
 	}
+	antreDB := antreRepo.NewDBConnection(antreConn)
+	rsvDB := rsvRepo.NewDBConnection(rsvConn)
+	rsvTransaction := db.GetDBTransaction(rsvDB.DB)
+	antreTransaction := db.GetDBTransaction(antreDB.DB)
 	antreUC := antreUC.NewAntreUC(&antreUC.AntreUC{
-		AntreDB: antreConn,
-		Config:  cfg,
+		AntreDB:     antreDB,
+		Config:      cfg,
+		Transaction: antreTransaction,
 	})
 
 	reservationUC := rsvUC.NewReservationUC(&rsvUC.ReservationUC{
-		ReservationDB: rsvConn,
+		ReservationDB: rsvDB,
 		Config:        cfg,
+		Transaction:   rsvTransaction,
 	})
 
 	antreHandler := antreHandler.NewAntreHandler(&antreHandler.AntreHandler{
@@ -60,12 +68,12 @@ func main() {
 	}
 	authHandler := auth.NewAuthModule(&auth.AuthModule{
 		JWTCertificate: cfg.Secretes.Data.JWTCertificate,
-		RouteRoles:     map[string]*jwt.RouteRoles{}, // TODO: updte route roles
+		RouteRoles:     cfg.RouteRoles, // TODO: updte route roles
 	})
 	modules := newModules(modules{
 		httpHandler: &handler,
 		Config:      cfg,
-		AuthHandler: authHandler,
+		AuthModule:  authHandler,
 	})
 	router := getRoute(modules)
 	log.Fatal(http.ListenAndServe(cfg.Server.HTTP.Address, router))

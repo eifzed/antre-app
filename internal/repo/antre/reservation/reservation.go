@@ -3,9 +3,9 @@ package reservation
 import (
 	"context"
 
-	db "github.com/eifzed/antre-app/internal/entity/database"
 	rsv "github.com/eifzed/antre-app/internal/entity/reservation"
 	"github.com/eifzed/antre-app/lib/common/databaseerr"
+	db "github.com/eifzed/antre-app/lib/database/xorm"
 )
 
 type Conn struct {

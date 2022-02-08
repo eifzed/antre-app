@@ -3,12 +3,13 @@ package auth
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 
+	"github.com/eifzed/antre-app/internal/entity/auth"
 	"github.com/eifzed/antre-app/lib/common/commonwriter"
 	"github.com/eifzed/antre-app/lib/utility/jwt"
+	"github.com/go-chi/chi"
 )
 
 var (
@@ -18,16 +19,23 @@ var (
 
 type AuthModule struct {
 	JWTCertificate *jwt.JWTCertificate
-	RouteRoles     map[string]*jwt.RouteRoles
+	RouteRoles     map[string]jwt.RouteRoles
+}
+
+// fieldInfo is getter/setter value from the Info Context
+type fieldInfo struct{}
+
+type userContext struct{}
+
+type Info struct {
+	UserID int64
+	Type   string
+	Data   map[string]interface{}
 }
 
 func NewAuthModule(module *AuthModule) *AuthModule {
 	return module
 }
-
-var (
-	roles = []jwt.Role{{ID: 123, Name: "dev"}}
-)
 
 func (m *AuthModule) AuthHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
@@ -37,18 +45,44 @@ func (m *AuthModule) AuthHandler(next http.Handler) http.Handler {
 		if err != nil {
 			authHandlerError(ctx, rw, r, err)
 		}
-		fmt.Println(jwtToken)
 		userPayload, err := jwt.DecodeToken(jwtToken, m.JWTCertificate.PublicKey)
 		if err != nil {
 			authHandlerError(ctx, rw, r, err)
 		}
+		rCtx := chi.RouteContext(r.Context())
+		if rCtx == nil {
+			authHandlerError(ctx, rw, r, errors.New("Context is not Chi Context"))
+		}
 
-		if !isUserAuthorized(userPayload.Roles, roles) {
+		route := rCtx.RouteMethod + " " + rCtx.RoutePattern()
+
+		if !isUserAuthorized(userPayload.Roles, m.RouteRoles[route].Roles) {
 			authHandlerError(ctx, rw, r, errUnauthorized)
 			return
 		}
+		ctx = m.SetKeyValueToContext(ctx, userContext{}, auth.UserDetail{
+			UserID:   userPayload.UserID,
+			Name:     userPayload.Name,
+			Username: userPayload.Username,
+			Email:    userPayload.Email,
+			Roles:    userPayload.Roles,
+		})
+
+		r = r.WithContext(ctx)
 		next.ServeHTTP(rw, r)
 	})
+}
+
+func (m *AuthModule) SetKeyValueToContext(ctx context.Context, key interface{}, value interface{}) context.Context {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	return context.WithValue(ctx, key, value)
+}
+
+func GetUserDetailFromContext(ctx context.Context) (auth.UserDetail, bool) {
+	user, exist := ctx.Value(userContext{}).(auth.UserDetail)
+	return user, exist
 }
 
 func isUserAuthorized(userRoles []jwt.Role, authorizedRoles []jwt.Role) bool {
@@ -74,5 +108,5 @@ func GetBearerToken(token string) (string, error) {
 }
 
 func authHandlerError(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	commonwriter.RespondError(ctx, w, http.StatusUnauthorized, err.Error())
+	commonwriter.RespondError(ctx, w, err)
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/eifzed/antre-app/lib/common"
 	"github.com/eifzed/antre-app/lib/helper/toggle"
+	"github.com/eifzed/antre-app/lib/utility/jwt"
 	"github.com/prometheus/common/log"
 	"gopkg.in/yaml.v2"
 )
@@ -26,9 +27,10 @@ type Server struct {
 }
 
 type Config struct {
-	Secretes *SecreteVault
-	Server   *Server        `yaml:"server"`
-	Toggle   *toggle.Toggle `yaml:"toggle"`
+	Secretes   *SecreteVault
+	Server     *Server                   `yaml:"server"`
+	Toggle     *toggle.Toggle            `yaml:"toggle"`
+	RouteRoles map[string]jwt.RouteRoles `yaml:"route_roles"`
 }
 
 func GetConfig() (*Config, error) {

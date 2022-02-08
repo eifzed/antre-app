@@ -13,6 +13,8 @@ type rsvHandlerInterface interface {
 
 type antreHandlerInterface interface {
 	RegisterNewAccount(w http.ResponseWriter, r *http.Request)
+	AssignNewRoleToUser(w http.ResponseWriter, r *http.Request)
+	Login(w http.ResponseWriter, r *http.Request)
 }
 
 type AuthModuleInterface interface {

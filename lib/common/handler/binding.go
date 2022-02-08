@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
 )
 
@@ -15,9 +14,7 @@ const (
 	ContentType       string = "Content-Type"
 )
 
-func GetURLParam(r *http.Request, param string) string {
-	return mux.Vars(r)[param]
-}
+type routeContext struct{}
 
 func Bind(r *http.Request, param interface{}, ignoreInvalidKeys ...bool) error {
 	if r.Method == http.MethodGet {

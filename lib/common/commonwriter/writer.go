@@ -5,12 +5,18 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+
+	"github.com/eifzed/antre-app/lib/common/commonerr"
+	"github.com/pkg/errors"
 )
 
 type key struct{}
 
 var errCtxKey key
 
+type CustomError struct {
+	ErrorMessage []*commonerr.ErrorFormat `json:"error_messages"`
+}
 type RequestInfo struct {
 	StartRequest time.Time
 	Host         string
@@ -91,14 +97,27 @@ func RespondOK(ctx context.Context, w http.ResponseWriter) {
 	sendResponseJSONData(w, nil, http.StatusOK, &Message{Message: "OK"})
 }
 
-func RespondDefaultError(ctx context.Context, w http.ResponseWriter, err error) error {
+func RespondError(ctx context.Context, w http.ResponseWriter, errValue error) error {
 	//TODO: handle uding custom error
-	_, newErr := sendResponseJSONData(w, nil, http.StatusInternalServerError, &Message{Message: err.Error()})
-	return newErr
+	switch errCause := errors.Cause(errValue).(type) {
+	case *commonerr.ErrorMessage:
+		SetErrorFormat(ctx, w, errCause.Code, errCause)
+	default:
+		RespondDefaultError(ctx, w, errValue)
+	}
+	return nil
 }
 
-func RespondError(ctx context.Context, w http.ResponseWriter, errorCode int, message string) error {
-	//TODO: handle uding custom error
-	_, newErr := sendResponseJSONData(w, nil, errorCode, &Message{Message: message})
-	return newErr
+func RespondDefaultError(ctx context.Context, w http.ResponseWriter, errValue error) {
+	SetErrorFormat(ctx, w, http.StatusInternalServerError, &commonerr.ErrorMessage{
+		ErrorList: []*commonerr.ErrorFormat{{
+			ErrorName:        "Error",
+			ErrorDescription: errValue.Error(),
+		}},
+	})
+}
+
+func SetErrorFormat(ctx context.Context, w http.ResponseWriter, errorCode int, errMessage *commonerr.ErrorMessage) error {
+	sendResponseJSONData(w, nil, errorCode, &CustomError{ErrorMessage: errMessage.ErrorList})
+	return nil
 }
