@@ -3,11 +3,11 @@ package order
 import (
 	"context"
 
-	rsv "github.com/eifzed/antre-app/internal/entity/order"
+	order "github.com/eifzed/antre-app/internal/entity/order"
 	"github.com/eifzed/antre-app/lib/common/databaseerr"
 )
 
-func (conn *Conn) InsertMapShopGoodService(ctx context.Context, goodService ...rsv.GoodServiceOption) error {
+func (conn *Conn) InsertMapShopGoodService(ctx context.Context, goodService ...order.GoodServiceOption) error {
 	if len(goodService) == 0 {
 		return nil
 	}

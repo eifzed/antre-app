@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	rsv "github.com/eifzed/antre-app/internal/entity/order"
+	order "github.com/eifzed/antre-app/internal/entity/order"
 	"github.com/eifzed/antre-app/internal/handler/http/middleware/auth"
 	"github.com/eifzed/antre-app/lib/common/commonerr"
 	"github.com/eifzed/antre-app/lib/common/databaseerr"
@@ -12,7 +12,7 @@ import (
 	pkgErr "github.com/pkg/errors"
 )
 
-func (uc *OrderUC) RegisterShop(ctx context.Context, shopRegistData rsv.ShopRegistration) error {
+func (uc *OrderUC) RegisterShop(ctx context.Context, shopRegistData order.ShopRegistration) error {
 	userDetail, exist := auth.GetUserDetailFromContext(ctx)
 	if !exist {
 		return commonerr.ErrorUnauthorized("user is not authorized")
@@ -34,7 +34,7 @@ func (uc *OrderUC) RegisterShop(ctx context.Context, shopRegistData rsv.ShopRegi
 		}
 		defer uc.Transaction.Finish(ctx, &err)
 		//register shop
-		dtlShop := rsv.DtlShop{
+		dtlShop := order.DtlShop{
 			ShopID:         shopRegistData.ShopID,
 			OwnerID:        userDetail.UserID,
 			ShopName:       shopRegistData.ShopName,
@@ -63,10 +63,10 @@ func (uc *OrderUC) RegisterShop(ctx context.Context, shopRegistData rsv.ShopRegi
 	return nil
 }
 
-func (uc *OrderUC) insertShopCategory(ctx context.Context, shopRegistData rsv.ShopRegistration) error {
-	categories := []rsv.MapShopCategory{}
+func (uc *OrderUC) insertShopCategory(ctx context.Context, shopRegistData order.ShopRegistration) error {
+	categories := []order.MapShopCategory{}
 	if shopRegistData.CategoryLv0 > 0 {
-		categories = append(categories, rsv.MapShopCategory{
+		categories = append(categories, order.MapShopCategory{
 			ShopID:     shopRegistData.ShopID,
 			CategoryID: shopRegistData.CategoryLv0,
 		})
@@ -79,7 +79,7 @@ func (uc *OrderUC) insertShopCategory(ctx context.Context, shopRegistData rsv.Sh
 	return nil
 }
 
-func (uc *OrderUC) insertShopGoodService(ctx context.Context, shopRegistData rsv.ShopRegistration) error {
+func (uc *OrderUC) insertShopGoodService(ctx context.Context, shopRegistData order.ShopRegistration) error {
 	shopID := shopRegistData.ShopID
 	for i := range shopRegistData.GoodServiceOptions {
 		shopRegistData.GoodServiceOptions[i].ShopID = shopID

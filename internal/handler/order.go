@@ -2,7 +2,7 @@ package handler
 
 import "net/http"
 
-type rsvHandlerInterface interface {
+type orderHandlerInterface interface {
 	// order handler
 	GetOrderByID(w http.ResponseWriter, r *http.Request)
 	RegisterOrder(w http.ResponseWriter, r *http.Request)

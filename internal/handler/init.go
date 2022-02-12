@@ -3,7 +3,7 @@ package handler
 import "net/http"
 
 type HttpHandler struct {
-	OrderHandler rsvHandlerInterface
+	OrderHandler orderHandlerInterface
 	AntreHandler antreHandlerInterface
 }
 

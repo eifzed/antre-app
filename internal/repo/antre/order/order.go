@@ -3,7 +3,7 @@ package order
 import (
 	"context"
 
-	rsv "github.com/eifzed/antre-app/internal/entity/order"
+	order "github.com/eifzed/antre-app/internal/entity/order"
 	"github.com/eifzed/antre-app/lib/common/databaseerr"
 	db "github.com/eifzed/antre-app/lib/database/xorm"
 )
@@ -23,17 +23,17 @@ func NewDBConnection(conn *db.Connection) *Conn {
 	}
 }
 
-func (con *Conn) GetOrderByID(ctx context.Context, rsvID int64) (*rsv.TrxOrder, error) {
-	data := &rsv.TrxOrder{}
+func (con *Conn) GetOrderByID(ctx context.Context, orderID int64) (*order.TrxOrder, error) {
+	data := &order.TrxOrder{}
 	session := con.DB.Slave.Context(ctx).Table("ant_trx_order")
-	_, err := session.Where("order_id = ?", rsvID).Get(data)
+	_, err := session.Where("order_id = ?", orderID).Get(data)
 	if err != nil {
 		return nil, err
 	}
 	return data, nil
 }
 
-func (con *Conn) InsertTrxOrder(ctx context.Context, order *rsv.TrxOrder) error {
+func (con *Conn) InsertTrxOrder(ctx context.Context, order *order.TrxOrder) error {
 	session := getSession(ctx)
 	if session != nil {
 		session = con.DB.Slave.Context(ctx)
@@ -48,13 +48,13 @@ func (con *Conn) InsertTrxOrder(ctx context.Context, order *rsv.TrxOrder) error 
 	return nil
 }
 
-func (con *Conn) UpdateTrxOrderByID(ctx context.Context, rsvID int64, order *rsv.TrxOrder) error {
+func (con *Conn) UpdateTrxOrderByID(ctx context.Context, orderID int64, order *order.TrxOrder) error {
 	session := getSession(ctx)
 	if session != nil {
 		session = con.DB.Slave.Context(ctx)
 	}
 	count, err := session.Table("ant_trx_order").
-		Where("order_id = ?", rsvID).
+		Where("order_id = ?", orderID).
 		Update(&order)
 	if err != nil {
 		return err

@@ -3,11 +3,11 @@ package order
 import (
 	"context"
 
-	rsv "github.com/eifzed/antre-app/internal/entity/order"
+	order "github.com/eifzed/antre-app/internal/entity/order"
 	"github.com/eifzed/antre-app/lib/common/databaseerr"
 )
 
-func (conn *Conn) InsertMapShopCategory(ctx context.Context, shopCategory ...rsv.MapShopCategory) error {
+func (conn *Conn) InsertMapShopCategory(ctx context.Context, shopCategory ...order.MapShopCategory) error {
 	if len(shopCategory) == 0 {
 		return nil
 	}

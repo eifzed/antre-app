@@ -9,7 +9,7 @@ import (
 	bind "github.com/eifzed/antre-app/lib/common/handler"
 )
 
-func (h *RsvHandler) RegisterShop(w http.ResponseWriter, r *http.Request) {
+func (h *OrderHandler) RegisterShop(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	data := order.ShopRegistration{}
 

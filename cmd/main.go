@@ -5,14 +5,14 @@ import (
 	"net/http"
 
 	"github.com/eifzed/antre-app/internal/config"
-	rsvUC "github.com/eifzed/antre-app/internal/usecase/antre/order"
+	orderUC "github.com/eifzed/antre-app/internal/usecase/antre/order"
 
 	"github.com/eifzed/antre-app/internal/handler"
 	antreHandler "github.com/eifzed/antre-app/internal/handler/http/antre"
-	rsvHandler "github.com/eifzed/antre-app/internal/handler/http/antre/order"
+	orderHandler "github.com/eifzed/antre-app/internal/handler/http/antre/order"
 	"github.com/eifzed/antre-app/internal/handler/http/middleware/auth"
 	antreRepo "github.com/eifzed/antre-app/internal/repo/antre"
-	rsvRepo "github.com/eifzed/antre-app/internal/repo/antre/order"
+	orderRepo "github.com/eifzed/antre-app/internal/repo/antre/order"
 	antreUC "github.com/eifzed/antre-app/internal/usecase/antre"
 	db "github.com/eifzed/antre-app/lib/database/xorm"
 	_ "github.com/lib/pq"
@@ -29,7 +29,7 @@ func main() {
 		log.Fatal(err)
 	}
 	cfg.Secretes = secrete
-	rsvConn, err := createDBConnection(cfg.Secretes.Data.DBMaster.DSN, cfg.Secretes.Data.DBSlave.DSN)
+	orderConn, err := createDBConnection(cfg.Secretes.Data.DBMaster.DSN, cfg.Secretes.Data.DBSlave.DSN)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,8 +38,8 @@ func main() {
 		log.Fatal(err)
 	}
 	antreDB := antreRepo.NewDBConnection(antreConn)
-	rsvDB := rsvRepo.NewDBConnection(rsvConn)
-	rsvTransaction := db.GetDBTransaction(rsvDB.DB)
+	orderDB := orderRepo.NewDBConnection(orderConn)
+	orderTransaction := db.GetDBTransaction(orderDB.DB)
 	antreTransaction := db.GetDBTransaction(antreDB.DB)
 	antreUC := antreUC.NewAntreUC(&antreUC.AntreUC{
 		AntreDB:     antreDB,
@@ -47,10 +47,10 @@ func main() {
 		Transaction: antreTransaction,
 	})
 
-	orderUC := rsvUC.NewOrderUC(&rsvUC.OrderUC{
-		OrderDB:     rsvDB,
+	orderUC := orderUC.NewOrderUC(&orderUC.OrderUC{
+		OrderDB:     orderDB,
 		Config:      cfg,
-		Transaction: rsvTransaction,
+		Transaction: orderTransaction,
 	})
 
 	antreHandler := antreHandler.NewAntreHandler(&antreHandler.AntreHandler{
@@ -58,7 +58,7 @@ func main() {
 		Config:  cfg,
 	})
 
-	orderHandler := rsvHandler.NewOrderHandler(&rsvHandler.RsvHandler{
+	orderHandler := orderHandler.NewOrderHandler(&orderHandler.OrderHandler{
 		OrderUC: orderUC,
 		Config:  cfg,
 	})
@@ -68,7 +68,7 @@ func main() {
 	}
 	authHandler := auth.NewAuthModule(&auth.AuthModule{
 		JWTCertificate: cfg.Secretes.Data.JWTCertificate,
-		RouteRoles:     cfg.RouteRoles, // TODO: updte route roles
+		RouteRoles:     cfg.RouteRoles,
 	})
 	modules := newModules(modules{
 		httpHandler: &handler,
