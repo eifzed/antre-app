@@ -59,7 +59,7 @@ route_roles:
       - id: 6
         name: "User"
 
-  "POST /v1/reservations/{id}":
+  "POST /v1/orders/{id}":
     roles:
       - id: 1
         name: "Developer"
