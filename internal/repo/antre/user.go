@@ -173,8 +173,9 @@ func (conn *Conn) GetAllUserRoles(ctx context.Context) ([]antre.MstRole, error) 
 
 func (conn *Conn) GetMstUserRoleByRoleName(ctx context.Context, roleName string) (*antre.MstRole, error) {
 	role := antre.MstRole{}
-	session := conn.DB.Slave.Context(ctx).Table("ant_mst_role").Where("role_name = ?", roleName)
+	session := conn.DB.Slave.Context(ctx).Table("ant_mst_role").Where("role_name ILIKE ?", roleName)
 	has, err := session.Get(&role)
+
 	if err != nil {
 		return nil, errors.Wrap(err, wrapPrefixGetMapUserRoleByEmail)
 	}

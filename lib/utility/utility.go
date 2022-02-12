@@ -2,6 +2,7 @@ package utility
 
 import (
 	"github.com/eifzed/antre-app/internal/entity/repo/antre"
+	"github.com/eifzed/antre-app/lib/utility/jwt"
 )
 
 func StringExistInSlice(item string, itemSlice []string) bool {
@@ -13,7 +14,16 @@ func StringExistInSlice(item string, itemSlice []string) bool {
 	return false
 }
 
-func RoleExistInSlice(item antre.MstRole, itemSlice []antre.MstRole) bool {
+func MstRoleExistInSlice(item antre.MstRole, itemSlice []antre.MstRole) bool {
+	for _, i := range itemSlice {
+		if i.Name == item.Name {
+			return true
+		}
+	}
+	return false
+}
+
+func RoleExistInSlice(item jwt.Role, itemSlice []jwt.Role) bool {
 	for _, i := range itemSlice {
 		if i.Name == item.Name {
 			return true

@@ -7,10 +7,6 @@ type HttpHandler struct {
 	AntreHandler       antreHandlerInterface
 }
 
-type rsvHandlerInterface interface {
-	GetReservationByID(w http.ResponseWriter, r *http.Request)
-}
-
 type antreHandlerInterface interface {
 	RegisterNewAccount(w http.ResponseWriter, r *http.Request)
 	AssignNewRoleToUser(w http.ResponseWriter, r *http.Request)

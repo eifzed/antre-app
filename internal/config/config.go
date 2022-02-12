@@ -31,6 +31,16 @@ type Config struct {
 	Server     *Server                   `yaml:"server"`
 	Toggle     *toggle.Toggle            `yaml:"toggle"`
 	RouteRoles map[string]jwt.RouteRoles `yaml:"route_roles"`
+	Roles      Roles                     `yaml:"roles"`
+}
+
+type Roles struct {
+	Developer jwt.Role `yaml:"developer"`
+	Admin     jwt.Role `yaml:"admin"`
+	Customer  jwt.Role `yaml:"customer"`
+	PIC       jwt.Role `yaml:"pic"`
+	Owner     jwt.Role `yaml:"owner"`
+	User      jwt.Role `yaml:"user"`
 }
 
 func GetConfig() (*Config, error) {

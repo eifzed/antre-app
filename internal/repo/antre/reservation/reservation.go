@@ -8,6 +8,10 @@ import (
 	db "github.com/eifzed/antre-app/lib/database/xorm"
 )
 
+var (
+	getSession = db.GetDBSession
+)
+
 type Conn struct {
 	DB *db.Connection
 	// Gocrypt *gocrypt.Option
@@ -30,8 +34,11 @@ func (con *Conn) GetReservationByID(ctx context.Context, rsvID int64) (*rsv.TrxR
 }
 
 func (con *Conn) InsertTrxReservation(ctx context.Context, reservation *rsv.TrxReservation) error {
-	session := con.DB.Slave.Context(ctx).Table("ant_trx_reservation")
-	count, err := session.Insert(&reservation)
+	session := getSession(ctx)
+	if session != nil {
+		session = con.DB.Slave.Context(ctx)
+	}
+	count, err := session.Table("ant_trx_reservation").Insert(&reservation)
 	if err != nil {
 		return err
 	}
@@ -42,8 +49,13 @@ func (con *Conn) InsertTrxReservation(ctx context.Context, reservation *rsv.TrxR
 }
 
 func (con *Conn) UpdateTrxReservationByID(ctx context.Context, rsvID int64, reservation *rsv.TrxReservation) error {
-	session := con.DB.Slave.Context(ctx).Table("ant_trx_reservation")
-	count, err := session.Where("reservation_id = ?", rsvID).Update(&reservation)
+	session := getSession(ctx)
+	if session != nil {
+		session = con.DB.Slave.Context(ctx)
+	}
+	count, err := session.Table("ant_trx_reservation").
+		Where("reservation_id = ?", rsvID).
+		Update(&reservation)
 	if err != nil {
 		return err
 	}

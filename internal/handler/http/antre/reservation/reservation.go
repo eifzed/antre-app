@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi"
 
 	"github.com/eifzed/antre-app/internal/config"
+	"github.com/eifzed/antre-app/lib/common/commonerr"
 	"github.com/eifzed/antre-app/lib/common/commonwriter"
 	bind "github.com/eifzed/antre-app/lib/common/handler"
 )
@@ -50,17 +51,14 @@ func (h *RsvHandler) RegisterReservation(w http.ResponseWriter, r *http.Request)
 
 	err := bind.Bind(r, &data)
 	if err != nil {
+		err = commonerr.ErrorBadRequest("invalid params", "invalid reservation params")
 		commonwriter.RespondDefaultError(ctx, w, err)
+		return
 	}
 	err = h.ReservationUC.RegisterReservation(ctx, data)
 	if err != nil {
 		commonwriter.RespondDefaultError(ctx, w, err)
 		return
 	}
-	if err != nil {
-		commonwriter.RespondDefaultError(ctx, w, err)
-		return
-	}
-	commonwriter.RespondOKWithData(ctx, w, data)
-
+	commonwriter.RespondOK(ctx, w)
 }

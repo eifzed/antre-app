@@ -29,10 +29,10 @@ type RequestInfo struct {
 }
 
 type Response struct {
-	Data   interface{}   `json:"data,omitempty"`
-	Errors []interface{} `json:"errors,omitempty"`
-	Meta   interface{}   `json:"meta,omitempty"`
-	Links  *Links        `json:"links,omitempty"`
+	Data   interface{} `json:"data,omitempty"`
+	Errors interface{} `json:"errors,omitempty"`
+	Meta   interface{} `json:"meta,omitempty"`
+	Links  *Links      `json:"links,omitempty"`
 }
 
 type Links struct {
@@ -53,7 +53,7 @@ func (resp *Response) Write(w http.ResponseWriter, r *http.Request, status int) 
 	if resp.Errors != nil {
 		// if errors then data should be empty and vise versa
 		resp.Data = nil
-		setError(r)
+		// setError(r)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	respByte, err := json.Marshal(resp)
@@ -69,11 +69,12 @@ func (resp *Response) Write(w http.ResponseWriter, r *http.Request, status int) 
 	return w.Write(respByte)
 }
 
-func setError(r *http.Request) {
-	ctx := r.Context()
-	ctx = context.WithValue(ctx, errCtxKey, true)
-	(*r) = *r.WithContext(ctx)
-}
+// TODO: enhance for loggin error
+// func setError(r *http.Request) {
+// 	ctx := r.Context()
+// 	ctx = context.WithValue(ctx, errCtxKey, true)
+// 	(*r) = *r.WithContext(ctx)
+// }
 
 func RespondOKWithData(ctx context.Context, w http.ResponseWriter, data interface{}) {
 	sendResponseJSONData(w, nil, http.StatusOK, data)
@@ -86,7 +87,11 @@ func RespondOKWithMessage(ctx context.Context, w http.ResponseWriter, message st
 func sendResponseJSONData(w http.ResponseWriter, r *http.Request, status int, data interface{}) (int, error) {
 	resp := Response{Data: data}
 	return resp.Write(w, r, status)
+}
 
+func sendResponseJSONError(w http.ResponseWriter, r *http.Request, status int, err *commonerr.ErrorMessage) (int, error) {
+	resp := Response{Errors: err}
+	return resp.Write(w, r, status)
 }
 
 func RespondOKWithByte(ctx context.Context, w http.ResponseWriter, byteData []byte) {
@@ -118,6 +123,6 @@ func RespondDefaultError(ctx context.Context, w http.ResponseWriter, errValue er
 }
 
 func SetErrorFormat(ctx context.Context, w http.ResponseWriter, errorCode int, errMessage *commonerr.ErrorMessage) error {
-	sendResponseJSONData(w, nil, errorCode, &CustomError{ErrorMessage: errMessage.ErrorList})
+	sendResponseJSONError(w, nil, errorCode, errMessage)
 	return nil
 }

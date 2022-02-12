@@ -10,8 +10,8 @@ type MstRole struct {
 	ID         int64      `xorm:"role_id pk autoincr"`
 	Name       string     `xorm:"role_name"`
 	CreateTime time.Time  `xorm:"create_time created"`
-	UpdateTime time.Time  `xorm:"create_time updated"`
-	DeleteTime *time.Time `xorm:"create_time deleted"`
+	UpdateTime time.Time  `xorm:"update_time updated"`
+	DeleteTime *time.Time `xorm:"delete_time deleted"`
 }
 
 type RegistrationResponse struct {
