@@ -1,8 +1,8 @@
-package reservation
+package order
 
 // Table constant
 const (
-	tblHstReservation     = "ant_hst_reservation"
+	tblHstOrder           = "ant_hst_order"
 	tblDtlShop            = "ant_dtl_shop"
 	tblMapShopGoodService = "ant_map_shop_good_service"
 	tblMapShopCategory    = "ant_map_shop_category"
@@ -10,6 +10,6 @@ const (
 
 // error wraps
 const (
-	wrapPrefix                    = "repo.antre.reservation."
+	wrapPrefix                    = "repo.antre.order."
 	wrapPrefixGetDtlShopByOwnerID = wrapPrefix + "GetDtlShopByOwnerID."
 )

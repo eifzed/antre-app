@@ -1,16 +1,16 @@
-package reservation
+package order
 
 import (
 	"context"
 
 	"github.com/pkg/errors"
 
-	"github.com/eifzed/antre-app/internal/entity/reservation"
+	"github.com/eifzed/antre-app/internal/entity/order"
 	"github.com/eifzed/antre-app/lib/common/databaseerr"
 )
 
-func (conn *Conn) GetDtlShopByOwnerID(ctx context.Context, ownerID int64) (*reservation.DtlShop, error) {
-	dtlShop := &reservation.DtlShop{}
+func (conn *Conn) GetDtlShopByOwnerID(ctx context.Context, ownerID int64) (*order.DtlShop, error) {
+	dtlShop := &order.DtlShop{}
 	session := conn.DB.Slave.Context(ctx).Table(tblDtlShop)
 	has, err := session.Where("owner_id = ?", ownerID).Get(dtlShop)
 	if err != nil {
@@ -22,7 +22,7 @@ func (conn *Conn) GetDtlShopByOwnerID(ctx context.Context, ownerID int64) (*rese
 	return dtlShop, nil
 }
 
-func (conn *Conn) InsertDtlShopByOwnerID(ctx context.Context, shopData *reservation.DtlShop) error {
+func (conn *Conn) InsertDtlShopByOwnerID(ctx context.Context, shopData *order.DtlShop) error {
 	session := getSession(ctx)
 	if session == nil {
 		session = conn.DB.Slave.Context(ctx)

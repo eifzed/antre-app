@@ -22,11 +22,11 @@ func getRoute(m *modules) *chi.Mux {
 				antre.Put(userRoute.URL("/assign/{role}"), m.httpHandler.AntreHandler.AssignNewRoleToUser)
 			})
 			path.Group("/shops", func(shopsRoute urlpath.Routes) {
-				antre.Post(shopsRoute.URL("/register"), m.httpHandler.ReservationHandler.RegisterShop)
+				antre.Post(shopsRoute.URL("/register"), m.httpHandler.OrderHandler.RegisterShop)
 			})
-			path.Group("/reservations", func(reservationRoute urlpath.Routes) {
-				antre.Post(reservationRoute.URL(""), m.httpHandler.ReservationHandler.RegisterReservation)
-				antre.Get(reservationRoute.URL("/{id}"), m.httpHandler.ReservationHandler.GetReservationByID)
+			path.Group("/orders", func(orderRoute urlpath.Routes) {
+				antre.Post(orderRoute.URL(""), m.httpHandler.OrderHandler.RegisterOrder)
+				antre.Get(orderRoute.URL("/{id}"), m.httpHandler.OrderHandler.GetOrderByID)
 			})
 		})
 

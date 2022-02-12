@@ -28,18 +28,18 @@ CREATE TABLE "ant_dtl_company" (
 
 
 
-CREATE TABLE "ant_trx_reservation" (
-	"reservation_id" bigserial not null NOT NULL,
+CREATE TABLE "ant_trx_order" (
+	"order_id" bigserial not null NOT NULL,
 	"customer_id" int8 NOT NULL,
 	"shop_id" int8 NOT NULL,
-	"reservation_time" timestamptz NOT NULL,
-	"reservation_type" varchar NOT NULL,
+	"order_time" timestamptz NOT NULL,
+	"order_type" varchar NOT NULL,
 	"status_id" int NOT NULL,
 	"customer_note" varchar(255) NOT NULL,
 	"create_time" timestamptz NOT NULL DEFAULT now(),
 	"update_time" timestamptz NOT NULL DEFAULT now(),
 	"delete_time" timestamptz,
-	CONSTRAINT "ant_trx_reservation_pk" PRIMARY KEY ("reservation_id")
+	CONSTRAINT "ant_trx_order_pk" PRIMARY KEY ("order_id")
 );
 
 
@@ -60,13 +60,13 @@ CREATE TABLE "ant_dtl_shop" (
 
 
 
-CREATE TABLE "ant_hst_reservation" (
-	"hst_reservation_id" bigserial NOT NULL,
-	"reservation_id" int8 NOT NULL,
+CREATE TABLE "ant_hst_order" (
+	"hst_order_id" bigserial NOT NULL,
+	"order_id" int8 NOT NULL,
 	"customer_id" int8 NOT NULL,
 	"shop_id" int NOT NULL,
-	"reservation_time" timestamptz NOT NULL,
-	"reservation_type" varchar NOT NULL,
+	"order_time" timestamptz NOT NULL,
+	"order_type" varchar NOT NULL,
 	"status_id" int NOT NULL,
 	"customer_note" varchar(255) NOT NULL,
 	"updater_id" int8 NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE "ant_hst_reservation" (
 	"create_time" timestamptz NOT NULL DEFAULT now(),
 	"update_time" timestamptz NOT NULL DEFAULT now(),
 	"delete_time" timestamptz,
-	CONSTRAINT "ant_hst_reservation_pk" PRIMARY KEY ("hst_reservation_id")
+	CONSTRAINT "ant_hst_order_pk" PRIMARY KEY ("hst_order_id")
 );
 
 
@@ -119,18 +119,18 @@ CREATE TABLE "ant_mst_status" (
 
 
 
-ALTER TABLE "ant_trx_reservation" ADD CONSTRAINT "ant_trx_reservation_fk0" FOREIGN KEY ("customer_id") REFERENCES "ant_mst_user"("user_id");
-ALTER TABLE "ant_trx_reservation" ADD CONSTRAINT "ant_trx_reservation_fk1" FOREIGN KEY ("shop_id") REFERENCES "ant_dtl_shop"("shop_id");
-ALTER TABLE "ant_trx_reservation" ADD CONSTRAINT "ant_trx_reservation_fk2" FOREIGN KEY ("status_id") REFERENCES "ant_mst_status"("status_id");
+ALTER TABLE "ant_trx_order" ADD CONSTRAINT "ant_trx_order_fk0" FOREIGN KEY ("customer_id") REFERENCES "ant_mst_user"("user_id");
+ALTER TABLE "ant_trx_order" ADD CONSTRAINT "ant_trx_order_fk1" FOREIGN KEY ("shop_id") REFERENCES "ant_dtl_shop"("shop_id");
+ALTER TABLE "ant_trx_order" ADD CONSTRAINT "ant_trx_order_fk2" FOREIGN KEY ("status_id") REFERENCES "ant_mst_status"("status_id");
 
 ALTER TABLE "ant_dtl_shop" ADD CONSTRAINT "ant_dtl_shop_fk0" FOREIGN KEY ("company_id") REFERENCES "ant_dtl_company"("company_id");
 ALTER TABLE "ant_dtl_shop" ADD CONSTRAINT "ant_dtl_shop_fk1" FOREIGN KEY ("pic_id") REFERENCES "ant_mst_user"("user_id");
 
-ALTER TABLE "ant_hst_reservation" ADD CONSTRAINT "ant_hst_reservation_fk0" FOREIGN KEY ("resrvation_id") REFERENCES "ant_trx_reservation"("reservation_id");
-ALTER TABLE "ant_hst_reservation" ADD CONSTRAINT "ant_hst_reservation_fk1" FOREIGN KEY ("customer_id") REFERENCES "ant_mst_user"("user_id");
-ALTER TABLE "ant_hst_reservation" ADD CONSTRAINT "ant_hst_reservation_fk2" FOREIGN KEY ("shop_id") REFERENCES "ant_dtl_shop"("shop_id");
-ALTER TABLE "ant_hst_reservation" ADD CONSTRAINT "ant_hst_reservation_fk3" FOREIGN KEY ("status_id") REFERENCES "ant_mst_status"("status_id");
-ALTER TABLE "ant_hst_reservation" ADD CONSTRAINT "ant_hst_reservation_fk4" FOREIGN KEY ("updater_id") REFERENCES "ant_mst_user"("user_id");
+ALTER TABLE "ant_hst_order" ADD CONSTRAINT "ant_hst_order_fk0" FOREIGN KEY ("resrvation_id") REFERENCES "ant_trx_order"("order_id");
+ALTER TABLE "ant_hst_order" ADD CONSTRAINT "ant_hst_order_fk1" FOREIGN KEY ("customer_id") REFERENCES "ant_mst_user"("user_id");
+ALTER TABLE "ant_hst_order" ADD CONSTRAINT "ant_hst_order_fk2" FOREIGN KEY ("shop_id") REFERENCES "ant_dtl_shop"("shop_id");
+ALTER TABLE "ant_hst_order" ADD CONSTRAINT "ant_hst_order_fk3" FOREIGN KEY ("status_id") REFERENCES "ant_mst_status"("status_id");
+ALTER TABLE "ant_hst_order" ADD CONSTRAINT "ant_hst_order_fk4" FOREIGN KEY ("updater_id") REFERENCES "ant_mst_user"("user_id");
 
 
 ALTER TABLE "ant_map_shop_category" ADD CONSTRAINT "ant_map_shop_category_fk0" FOREIGN KEY ("shop_id") REFERENCES "ant_dtl_shop"("shop_id");
@@ -141,11 +141,11 @@ CREATE INDEX CONCURRENTLY ant_mst_user_user_type_delete_time ON ant_mst_user USI
 
 CREATE INDEX CONCURRENTLY ant_dtl_company_owner_id_delete_time ON ant_dtl_company USING btree (delete_time, owner_id);
 
-CREATE INDEX CONCURRENTLY ant_trx_reservation_customer_id_shop_id_reservation_time_status_id_delete_time ON ant_trx_reservation USING btree (delete_time, customer_id, shop_id, reservation_time, status_id);
+CREATE INDEX CONCURRENTLY ant_trx_order_customer_id_shop_id_order_time_status_id_delete_time ON ant_trx_order USING btree (delete_time, customer_id, shop_id, order_time, status_id);
 
 CREATE INDEX CONCURRENTLY ant_dtl_shop_pic_id_company_id_delete_time ON ant_dtl_shop USING btree (delete_time, pic_id, company_id);
 
-CREATE INDEX CONCURRENTLY ant_hst_reservation_reservation_id_customer_id_shop_id_delete_time ON ant_hst_reservation USING btree (reservation_id, customer_id, shop_id, delete_time);
+CREATE INDEX CONCURRENTLY ant_hst_order_order_id_customer_id_shop_id_delete_time ON ant_hst_order USING btree (order_id, customer_id, shop_id, delete_time);
 
 CREATE INDEX CONCURRENTLY ant_map_shop_category_shop_id_category_id_delete_time ON ant_map_shop_category USING btree (shop_id, category_id, delete_time);
 

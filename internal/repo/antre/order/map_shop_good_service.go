@@ -1,14 +1,14 @@
-package reservation
+package order
 
 import (
 	"context"
 
-	rsv "github.com/eifzed/antre-app/internal/entity/reservation"
+	rsv "github.com/eifzed/antre-app/internal/entity/order"
 	"github.com/eifzed/antre-app/lib/common/databaseerr"
 )
 
-func (conn *Conn) InsertMapShopCategory(ctx context.Context, shopCategory ...rsv.MapShopCategory) error {
-	if len(shopCategory) == 0 {
+func (conn *Conn) InsertMapShopGoodService(ctx context.Context, goodService ...rsv.GoodServiceOption) error {
+	if len(goodService) == 0 {
 		return nil
 	}
 
@@ -16,7 +16,7 @@ func (conn *Conn) InsertMapShopCategory(ctx context.Context, shopCategory ...rsv
 	if session == nil {
 		session = conn.DB.Master.Context(ctx)
 	}
-	count, err := session.Table(tblMapShopCategory).Insert(shopCategory)
+	count, err := session.Table(tblMapShopGoodService).Insert(goodService)
 	if err != nil {
 		return err
 	}

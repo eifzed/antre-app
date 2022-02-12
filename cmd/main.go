@@ -5,14 +5,14 @@ import (
 	"net/http"
 
 	"github.com/eifzed/antre-app/internal/config"
-	rsvUC "github.com/eifzed/antre-app/internal/usecase/antre/reservation"
+	rsvUC "github.com/eifzed/antre-app/internal/usecase/antre/order"
 
 	"github.com/eifzed/antre-app/internal/handler"
 	antreHandler "github.com/eifzed/antre-app/internal/handler/http/antre"
-	rsvHandler "github.com/eifzed/antre-app/internal/handler/http/antre/reservation"
+	rsvHandler "github.com/eifzed/antre-app/internal/handler/http/antre/order"
 	"github.com/eifzed/antre-app/internal/handler/http/middleware/auth"
 	antreRepo "github.com/eifzed/antre-app/internal/repo/antre"
-	rsvRepo "github.com/eifzed/antre-app/internal/repo/antre/reservation"
+	rsvRepo "github.com/eifzed/antre-app/internal/repo/antre/order"
 	antreUC "github.com/eifzed/antre-app/internal/usecase/antre"
 	db "github.com/eifzed/antre-app/lib/database/xorm"
 	_ "github.com/lib/pq"
@@ -47,10 +47,10 @@ func main() {
 		Transaction: antreTransaction,
 	})
 
-	reservationUC := rsvUC.NewReservationUC(&rsvUC.ReservationUC{
-		ReservationDB: rsvDB,
-		Config:        cfg,
-		Transaction:   rsvTransaction,
+	orderUC := rsvUC.NewOrderUC(&rsvUC.OrderUC{
+		OrderDB:     rsvDB,
+		Config:      cfg,
+		Transaction: rsvTransaction,
 	})
 
 	antreHandler := antreHandler.NewAntreHandler(&antreHandler.AntreHandler{
@@ -58,13 +58,13 @@ func main() {
 		Config:  cfg,
 	})
 
-	reservationHandler := rsvHandler.NewReservationHandler(&rsvHandler.RsvHandler{
-		ReservationUC: reservationUC,
-		Config:        cfg,
+	orderHandler := rsvHandler.NewOrderHandler(&rsvHandler.RsvHandler{
+		OrderUC: orderUC,
+		Config:  cfg,
 	})
 	handler := handler.HttpHandler{
-		ReservationHandler: reservationHandler,
-		AntreHandler:       antreHandler,
+		OrderHandler: orderHandler,
+		AntreHandler: antreHandler,
 	}
 	authHandler := auth.NewAuthModule(&auth.AuthModule{
 		JWTCertificate: cfg.Secretes.Data.JWTCertificate,

@@ -1,4 +1,4 @@
-package reservation
+package order
 
 import "time"
 
@@ -52,7 +52,7 @@ type DtlShop struct {
 	PostalCode     int64      `xorm:"postal_code"`
 	OpenHour       int        `json:"open_hour" xorm:"open_hour"`
 	CloseHour      int        `json:"close_hour" xorm:"close_hour"`
-	ShopPictureURL string     `json:"shop_picture_url" xorm:"shop_picture_url"`
+	ShopPictureURL string     `json:"shßop_picture_url" xorm:"shop_picture_url"`
 	CreateTime     time.Time  `xorm:"create_time created"`
 	UpdateTime     time.Time  `xorm:"update_time updated"`
 	DeleteTime     *time.Time `xorm:"delete_time deleted"`

@@ -1,4 +1,4 @@
-package reservation
+package order
 
 const (
 	RoleDeveloper = 1
@@ -9,12 +9,12 @@ const (
 	RoleUser      = 6
 )
 
-// HstReservation constat
+// HstOrder constat
 const (
-	ReasonNewReservation = "New Reservation"
+	ReasonNewOrder = "New Order"
 )
 
-// reservation status constant
+// order status constant
 const (
 	StatusRegistered              = 1
 	StatusAccepted                = 2

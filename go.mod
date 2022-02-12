@@ -4,7 +4,6 @@ go 1.17
 
 require (
 	github.com/go-xorm/xorm v0.7.9
-	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.4
 )
 

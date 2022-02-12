@@ -1,11 +1,11 @@
-package reservation
+package order
 
 import (
 	"net/http"
 	"strconv"
 
-	"github.com/eifzed/antre-app/internal/entity/reservation"
-	rsvUC "github.com/eifzed/antre-app/internal/entity/usecase/antre/reservation"
+	"github.com/eifzed/antre-app/internal/entity/order"
+	rsvUC "github.com/eifzed/antre-app/internal/entity/usecase/antre/order"
 	"github.com/go-chi/chi"
 
 	"github.com/eifzed/antre-app/internal/config"
@@ -15,15 +15,15 @@ import (
 )
 
 type RsvHandler struct {
-	ReservationUC rsvUC.ReservationUCInterface
-	Config        *config.Config
+	OrderUC rsvUC.OrderUCInterface
+	Config  *config.Config
 }
 
-func NewReservationHandler(rsvHandler *RsvHandler) *RsvHandler {
+func NewOrderHandler(rsvHandler *RsvHandler) *RsvHandler {
 	return rsvHandler
 }
 
-func (h *RsvHandler) GetReservationByID(w http.ResponseWriter, r *http.Request) {
+func (h *RsvHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	rsvIDParams := chi.URLParam(r, "id")
 	rsvID, err := strconv.ParseInt(rsvIDParams, 10, 64)
@@ -32,7 +32,7 @@ func (h *RsvHandler) GetReservationByID(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	result, err := h.ReservationUC.GetReservationByID(ctx, rsvID)
+	result, err := h.OrderUC.GetOrderByID(ctx, rsvID)
 	if err != nil {
 		commonwriter.RespondDefaultError(ctx, w, err)
 		return
@@ -45,17 +45,17 @@ func (h *RsvHandler) GetReservationByID(w http.ResponseWriter, r *http.Request) 
 
 }
 
-func (h *RsvHandler) RegisterReservation(w http.ResponseWriter, r *http.Request) {
+func (h *RsvHandler) RegisterOrder(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	data := &reservation.TrxReservation{}
+	data := order.OrderRegistration{}
 
 	err := bind.Bind(r, &data)
 	if err != nil {
-		err = commonerr.ErrorBadRequest("invalid params", "invalid reservation params")
+		err = commonerr.ErrorBadRequest("invalid params", "invalid order params")
 		commonwriter.RespondDefaultError(ctx, w, err)
 		return
 	}
-	err = h.ReservationUC.RegisterReservation(ctx, data)
+	err = h.OrderUC.RegisterOrder(ctx, data)
 	if err != nil {
 		commonwriter.RespondDefaultError(ctx, w, err)
 		return

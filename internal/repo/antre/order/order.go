@@ -1,9 +1,9 @@
-package reservation
+package order
 
 import (
 	"context"
 
-	rsv "github.com/eifzed/antre-app/internal/entity/reservation"
+	rsv "github.com/eifzed/antre-app/internal/entity/order"
 	"github.com/eifzed/antre-app/lib/common/databaseerr"
 	db "github.com/eifzed/antre-app/lib/database/xorm"
 )
@@ -23,22 +23,22 @@ func NewDBConnection(conn *db.Connection) *Conn {
 	}
 }
 
-func (con *Conn) GetReservationByID(ctx context.Context, rsvID int64) (*rsv.TrxReservation, error) {
-	data := &rsv.TrxReservation{}
-	session := con.DB.Slave.Context(ctx).Table("ant_trx_reservation")
-	_, err := session.Where("reservation_id = ?", rsvID).Get(data)
+func (con *Conn) GetOrderByID(ctx context.Context, rsvID int64) (*rsv.TrxOrder, error) {
+	data := &rsv.TrxOrder{}
+	session := con.DB.Slave.Context(ctx).Table("ant_trx_order")
+	_, err := session.Where("order_id = ?", rsvID).Get(data)
 	if err != nil {
 		return nil, err
 	}
 	return data, nil
 }
 
-func (con *Conn) InsertTrxReservation(ctx context.Context, reservation *rsv.TrxReservation) error {
+func (con *Conn) InsertTrxOrder(ctx context.Context, order *rsv.TrxOrder) error {
 	session := getSession(ctx)
 	if session != nil {
 		session = con.DB.Slave.Context(ctx)
 	}
-	count, err := session.Table("ant_trx_reservation").Insert(&reservation)
+	count, err := session.Table("ant_trx_order").Insert(&order)
 	if err != nil {
 		return err
 	}
@@ -48,14 +48,14 @@ func (con *Conn) InsertTrxReservation(ctx context.Context, reservation *rsv.TrxR
 	return nil
 }
 
-func (con *Conn) UpdateTrxReservationByID(ctx context.Context, rsvID int64, reservation *rsv.TrxReservation) error {
+func (con *Conn) UpdateTrxOrderByID(ctx context.Context, rsvID int64, order *rsv.TrxOrder) error {
 	session := getSession(ctx)
 	if session != nil {
 		session = con.DB.Slave.Context(ctx)
 	}
-	count, err := session.Table("ant_trx_reservation").
-		Where("reservation_id = ?", rsvID).
-		Update(&reservation)
+	count, err := session.Table("ant_trx_order").
+		Where("order_id = ?", rsvID).
+		Update(&order)
 	if err != nil {
 		return err
 	}

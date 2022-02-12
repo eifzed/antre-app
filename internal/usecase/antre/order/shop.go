@@ -1,10 +1,10 @@
-package reservation
+package order
 
 import (
 	"context"
 	"errors"
 
-	rsv "github.com/eifzed/antre-app/internal/entity/reservation"
+	rsv "github.com/eifzed/antre-app/internal/entity/order"
 	"github.com/eifzed/antre-app/internal/handler/http/middleware/auth"
 	"github.com/eifzed/antre-app/lib/common/commonerr"
 	"github.com/eifzed/antre-app/lib/common/databaseerr"
@@ -12,7 +12,7 @@ import (
 	pkgErr "github.com/pkg/errors"
 )
 
-func (uc *ReservationUC) RegisterShop(ctx context.Context, shopRegistData rsv.ShopRegistration) error {
+func (uc *OrderUC) RegisterShop(ctx context.Context, shopRegistData rsv.ShopRegistration) error {
 	userDetail, exist := auth.GetUserDetailFromContext(ctx)
 	if !exist {
 		return commonerr.ErrorUnauthorized("user is not authorized")
@@ -22,7 +22,7 @@ func (uc *ReservationUC) RegisterShop(ctx context.Context, shopRegistData rsv.Sh
 		return commonerr.ErrorUnauthorized("User does not have owner role")
 	}
 
-	_, err := uc.ReservationDB.GetDtlShopByOwnerID(ctx, userDetail.UserID)
+	_, err := uc.OrderDB.GetDtlShopByOwnerID(ctx, userDetail.UserID)
 	if err != nil && !errors.Is(err, databaseerr.ErrorDataNotFound) {
 		return pkgErr.Wrap(err, wrapPrefixRegisterShop+"GetDtlShopByOwnerID")
 	}
@@ -45,7 +45,7 @@ func (uc *ReservationUC) RegisterShop(ctx context.Context, shopRegistData rsv.Sh
 			CloseHour:      shopRegistData.CloseHour,
 			ShopPictureURL: shopRegistData.ShopPictureURL,
 		}
-		err = uc.ReservationDB.InsertDtlShopByOwnerID(ctx, &dtlShop)
+		err = uc.OrderDB.InsertDtlShopByOwnerID(ctx, &dtlShop)
 		if err != nil {
 			return pkgErr.Wrap(err, wrapPrefixRegisterShop+"InsertDtlShopByOwnerID")
 		}
@@ -63,7 +63,7 @@ func (uc *ReservationUC) RegisterShop(ctx context.Context, shopRegistData rsv.Sh
 	return nil
 }
 
-func (uc *ReservationUC) insertShopCategory(ctx context.Context, shopRegistData rsv.ShopRegistration) error {
+func (uc *OrderUC) insertShopCategory(ctx context.Context, shopRegistData rsv.ShopRegistration) error {
 	categories := []rsv.MapShopCategory{}
 	if shopRegistData.CategoryLv0 > 0 {
 		categories = append(categories, rsv.MapShopCategory{
@@ -72,19 +72,19 @@ func (uc *ReservationUC) insertShopCategory(ctx context.Context, shopRegistData 
 		})
 	}
 	// TODO: add level 1 and 2 category
-	err := uc.ReservationDB.InsertMapShopCategory(ctx, categories...)
+	err := uc.OrderDB.InsertMapShopCategory(ctx, categories...)
 	if err != nil {
 		return pkgErr.Wrap(err, "insertShopCategory.InsertMapShopCategory")
 	}
 	return nil
 }
 
-func (uc *ReservationUC) insertShopGoodService(ctx context.Context, shopRegistData rsv.ShopRegistration) error {
+func (uc *OrderUC) insertShopGoodService(ctx context.Context, shopRegistData rsv.ShopRegistration) error {
 	shopID := shopRegistData.ShopID
 	for i := range shopRegistData.GoodServiceOptions {
 		shopRegistData.GoodServiceOptions[i].ShopID = shopID
 	}
-	err := uc.ReservationDB.InsertMapShopGoodService(ctx, shopRegistData.GoodServiceOptions...)
+	err := uc.OrderDB.InsertMapShopGoodService(ctx, shopRegistData.GoodServiceOptions...)
 	if err != nil {
 		return pkgErr.Wrap(err, "insertShopGoodService.InsertMapShopGoodService")
 	}

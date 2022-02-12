@@ -3,8 +3,8 @@ package handler
 import "net/http"
 
 type HttpHandler struct {
-	ReservationHandler rsvHandlerInterface
-	AntreHandler       antreHandlerInterface
+	OrderHandler rsvHandlerInterface
+	AntreHandler antreHandlerInterface
 }
 
 type antreHandlerInterface interface {
