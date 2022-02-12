@@ -9,7 +9,7 @@ import (
 
 func (conn *Conn) GetHstReservationByHstID(ctx context.Context, hstReservationID int64) (*rsv.HstReservation, error) {
 	hstReservation := &rsv.HstReservation{}
-	session := conn.DB.Master.Context(ctx).Table("ant_hst_reservation")
+	session := conn.DB.Master.Context(ctx).Table(tblHstReservation)
 	has, err := session.Where("hst_reservation_id = ?", hstReservationID).Get(hstReservation)
 	if err != nil {
 		return nil, err
@@ -22,7 +22,7 @@ func (conn *Conn) GetHstReservationByHstID(ctx context.Context, hstReservationID
 
 func (conn *Conn) GetHstReservationByRsvID(ctx context.Context, rsvID int64) (*rsv.HstReservation, error) {
 	hstReservation := &rsv.HstReservation{}
-	session := conn.DB.Master.Context(ctx).Table("ant_hst_reservation")
+	session := conn.DB.Master.Context(ctx).Table(tblHstReservation)
 	has, err := session.Where("reservation_id = ?", rsvID).Get(hstReservation)
 	if err != nil {
 		return nil, err
@@ -34,8 +34,11 @@ func (conn *Conn) GetHstReservationByRsvID(ctx context.Context, rsvID int64) (*r
 }
 
 func (conn *Conn) InsertHstReservation(ctx context.Context, hstReservation *rsv.HstReservation) error {
-	session := conn.DB.Master.Context(ctx).Table("ant_hst_reservation")
-	count, err := session.Insert(hstReservation)
+	session := getSession(ctx)
+	if session != nil {
+		session = conn.DB.Master.Context(ctx)
+	}
+	count, err := session.Table(tblHstReservation).Insert(hstReservation)
 	if err != nil {
 		return err
 	}
@@ -46,7 +49,7 @@ func (conn *Conn) InsertHstReservation(ctx context.Context, hstReservation *rsv.
 }
 
 func (conn *Conn) UpdateHstReservationByHstID(ctx context.Context, hstReservationID int64, hstReservation *rsv.HstReservation) error {
-	session := conn.DB.Master.Context(ctx).Table("ant_hst_reservation")
+	session := conn.DB.Master.Context(ctx).Table(tblHstReservation)
 	count, err := session.Where("hst_reservation_id = ?", hstReservationID).Update(hstReservation)
 	if err != nil {
 		return err

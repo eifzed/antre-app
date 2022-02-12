@@ -6,8 +6,8 @@ import (
 )
 
 type ErrorMessage struct {
-	ErrorList []*ErrorFormat
-	Code      int
+	ErrorList []*ErrorFormat `json:"error_list"`
+	Code      int            `json:"code"`
 }
 
 type ErrorFormat struct {
@@ -36,7 +36,11 @@ func ErrorAlreadyExist(errorName, errorDesc string) *ErrorMessage {
 }
 
 func ErrorUnauthorized(errorDesc string) *ErrorMessage {
-	return NewError(http.StatusUnauthorized, "Unauthorized", errorDesc)
+	return NewError(http.StatusUnauthorized, "unauthorized", errorDesc)
+}
+
+func ErrorForbidden(errorDesc string) *ErrorMessage {
+	return NewError(http.StatusForbidden, "forbidden", errorDesc)
 }
 
 func (errorMessage *ErrorMessage) Error() string {

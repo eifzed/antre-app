@@ -8,6 +8,26 @@ server:
 toggle:
   enable_something: true
 
+roles:
+  developer: 
+    id: 1
+    name: "Developer"
+  admin: 
+    id: 2
+    name: "Admin"
+  customer:
+    id: 3
+    name: "Customer"
+  pic:
+    id: 4
+    name: "PIC"
+  owner:
+    id: 5
+    name: "Owner"
+  user:
+    id: 6
+    name: "User"
+
 route_roles:
   "":
     roles:
@@ -49,6 +69,15 @@ route_roles:
         name: "Customer"
       - id: 4
         name: "PIC"
+      - id: 5
+        name: "Owner"
+
+  "POST /v1/shops/register":
+    roles:
+      - id: 1
+        name: "Developer"
+      - id: 2
+        name: "Admin"
       - id: 5
         name: "Owner"
       

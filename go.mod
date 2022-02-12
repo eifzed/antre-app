@@ -29,7 +29,7 @@ require (
 	github.com/sirupsen/logrus v1.2.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
-	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/sys v0.0.0-20211103235746-7861aae1554b // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
 )

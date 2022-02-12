@@ -9,6 +9,9 @@ import (
 type Reservation interface {
 	reservation
 	hstReservation
+	dtlShop
+	mapGoodService
+	mapShopCategory
 }
 
 type reservation interface {
@@ -22,4 +25,17 @@ type hstReservation interface {
 	GetHstReservationByHstID(ctx context.Context, hstReservationID int64) (*rsv.HstReservation, error)
 	InsertHstReservation(ctx context.Context, hstReservation *rsv.HstReservation) error
 	UpdateHstReservationByHstID(ctx context.Context, hstReservationID int64, hstReservation *rsv.HstReservation) error
+}
+
+type dtlShop interface {
+	GetDtlShopByOwnerID(ctx context.Context, ownerID int64) (*rsv.DtlShop, error)
+	InsertDtlShopByOwnerID(ctx context.Context, shopData *rsv.DtlShop) error
+}
+
+type mapGoodService interface {
+	InsertMapShopGoodService(ctx context.Context, goodService ...rsv.GoodServiceOption) error
+}
+
+type mapShopCategory interface {
+	InsertMapShopCategory(ctx context.Context, shopCategory ...rsv.MapShopCategory) error
 }
