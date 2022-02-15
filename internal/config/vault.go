@@ -61,6 +61,6 @@ func GetSecretes() *SecreteVault {
 }
 
 func IsDevelopment() bool {
-	isLocal := os.Getenv("ISLOCAL")
-	return isLocal == "1"
+	// isLocal := os.Getenv("ISLOCAL")
+	return true
 }

@@ -26,6 +26,7 @@ func getRoute(m *modules) *chi.Mux {
 			})
 			path.Group("/orders", func(orderRoute urlpath.Routes) {
 				antre.Post(orderRoute.URL(""), m.httpHandler.OrderHandler.RegisterOrder)
+				antre.Get(orderRoute.URL(""), m.httpHandler.OrderHandler.GetCustomerOrders)
 				antre.Get(orderRoute.URL("/{id}"), m.httpHandler.OrderHandler.GetOrderByID)
 			})
 		})

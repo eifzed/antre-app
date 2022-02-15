@@ -59,7 +59,20 @@ route_roles:
       - id: 6
         name: "User"
 
-  "POST /v1/orders/{id}":
+  "POST /v1/orders":
+    roles:
+      - id: 1
+        name: "Developer"
+      - id: 2
+        name: "Admin"
+      - id: 3
+        name: "Customer"
+      - id: 4
+        name: "PIC"
+      - id: 5
+        name: "Owner"
+
+  "GET /v1/orders":
     roles:
       - id: 1
         name: "Developer"

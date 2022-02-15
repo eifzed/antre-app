@@ -2,12 +2,15 @@ package order
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/eifzed/antre-app/internal/config"
 	"github.com/eifzed/antre-app/internal/entity/order"
 	orderRepo "github.com/eifzed/antre-app/internal/entity/repo/antre/order"
 	"github.com/eifzed/antre-app/internal/handler/http/middleware/auth"
 	"github.com/eifzed/antre-app/lib/common/commonerr"
+	"github.com/eifzed/antre-app/lib/common/databaseerr"
 	db "github.com/eifzed/antre-app/lib/database/xorm"
 	"github.com/eifzed/antre-app/lib/utility"
 	pkgErr "github.com/pkg/errors"
@@ -17,6 +20,7 @@ const (
 	wrapPrefix              = "usecase.antre.order"
 	wrapPrefixRegisterShop  = wrapPrefix + "RegisterShop."
 	wrapPrefixRegisterOrder = wrapPrefix + "RegisterOrder."
+	wrapPrefixGetUserOrders = wrapPrefix + "GetUserOrders"
 )
 
 type OrderUC struct {
@@ -56,6 +60,9 @@ func (uc *OrderUC) RegisterOrder(ctx context.Context, orderData order.OrderRegis
 	if err != nil {
 		return pkgErr.Wrap(err, wrapPrefixRegisterOrder+"InsertTrxOrder")
 	}
+	for i := range orderData.Orders {
+		orderData.Orders[i].OrderID = trxOrder.OrderID
+	}
 	err = uc.insertMapOrderGoodService(ctx, orderData)
 	if err != nil {
 		return pkgErr.Wrap(err, wrapPrefixRegisterOrder+"insertMapOrderGoodService")
@@ -77,6 +84,68 @@ func (uc *OrderUC) RegisterOrder(ctx context.Context, orderData order.OrderRegis
 	return nil
 }
 
-func (uc *OrderUC) insertMapOrderGoodService(ctx context.Context, order order.OrderRegistration) error {
+func (uc *OrderUC) insertMapOrderGoodService(ctx context.Context, orderData order.OrderRegistration) error {
+	if orderData.Orders == nil || len(orderData.Orders) == 0 {
+		return commonerr.ErrorBadRequest("order options", "empty order options")
+	}
+	goodServiceIDs := []int64{}
+	for _, o := range orderData.Orders {
+		goodServiceIDs = append(goodServiceIDs, o.GoodServiceID)
+	}
+	// validate that orders exist in shop options
+	goodServiceList, err := uc.OrderDB.GetMapShopGoodServiceByShopID(ctx, orderData.ShopID, goodServiceIDs...)
+	if err != nil {
+		return pkgErr.Wrap(err, wrapPrefixRegisterOrder+"GetMapShopGoodServiceByShopID")
+	}
+	if len(goodServiceList) != len(goodServiceIDs) {
+		return commonerr.ErrorBadRequest("good/service id", "invalid good/service IDs")
+	}
+
+	// get price of each good/service
+	for i, r := range orderData.Orders {
+		for _, o := range goodServiceList {
+			if r.GoodServiceID == o.ID {
+				orderData.Orders[i].PricePerItemIDR = o.PriceIDR
+				break
+			}
+		}
+	}
+
+	err = uc.OrderDB.InsertMapOrderGoodService(ctx, orderData.Orders...)
+	if err != nil {
+		return pkgErr.Wrap(err, wrapPrefixRegisterOrder+"InsertMapOrderGoodService")
+	}
 	return nil
+}
+
+func (uc *OrderUC) GetCustomerOrders(ctx context.Context) (order.DtlOrderList, error) {
+	result := order.DtlOrderList{}
+	userDetail, isExist := auth.GetUserDetailFromContext(ctx)
+	if !isExist {
+		return result, commonerr.ErrorForbidden("user does not exist")
+	}
+	if !utility.RoleExistInSlice(uc.Config.Roles.Customer, userDetail.Roles) {
+		return result, commonerr.ErrorForbidden("user does not have customer role")
+	}
+	something := errors.New("testing")
+	something = nil
+	fmt.Println(something.Error())
+
+	dtlOrder, err := uc.OrderDB.GetDtlOrdersByCustomerID(ctx, userDetail.UserID)
+	if err != nil && !errors.Is(err, databaseerr.ErrorDataNotFound) {
+		return result, pkgErr.Wrap(err, wrapPrefixGetUserOrders+"GetTrxOrderByCustomerID")
+	}
+	if errors.Is(err, databaseerr.ErrorDataNotFound) {
+		return result, nil
+	}
+	for i, dtl := range dtlOrder {
+		mapOrderGoodService, err := uc.OrderDB.GetMapOrderGoodServiceByOrderID(ctx, dtl.OrderID)
+		if err != nil {
+			return result, pkgErr.Wrap(err, wrapPrefixGetUserOrders+"GetMapOrderGoodServiceByOrderID")
+		}
+		dtlOrder[i].Orders = mapOrderGoodService
+	}
+	result.TotalOrder = int64(len(dtlOrder))
+	result.OrderDetailList = dtlOrder
+	return result, nil
 }

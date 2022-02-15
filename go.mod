@@ -32,3 +32,5 @@ require (
 	golang.org/x/sys v0.0.0-20211103235746-7861aae1554b // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
 )
+
+require github.com/zimbatm/socketmaster v1.0.71 // indirect

@@ -22,6 +22,19 @@ func (conn *Conn) GetDtlShopByOwnerID(ctx context.Context, ownerID int64) (*orde
 	return dtlShop, nil
 }
 
+func (conn *Conn) GetDtlShopByShopID(ctx context.Context, shopID int64) (*order.DtlShop, error) {
+	dtlShop := &order.DtlShop{}
+	session := conn.DB.Slave.Context(ctx).Table(tblDtlShop)
+	has, err := session.Where("shop_id = ?", shopID).Get(dtlShop)
+	if err != nil {
+		return nil, errors.Wrap(err, wrapPrefixGetDtlShopByShopID)
+	}
+	if !has {
+		return nil, databaseerr.ErrorDataNotFound
+	}
+	return dtlShop, nil
+}
+
 func (conn *Conn) InsertDtlShopByOwnerID(ctx context.Context, shopData *order.DtlShop) error {
 	session := getSession(ctx)
 	if session == nil {

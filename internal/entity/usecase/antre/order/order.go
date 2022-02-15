@@ -14,6 +14,7 @@ type OrderUCInterface interface {
 type orders interface {
 	GetOrderByID(ctx context.Context, orderID int64) (*order.TrxOrder, error)
 	RegisterOrder(ctx context.Context, resrvation order.OrderRegistration) error
+	GetCustomerOrders(ctx context.Context) (order.DtlOrderList, error)
 }
 
 type shop interface {

@@ -62,3 +62,15 @@ func (h *OrderHandler) RegisterOrder(w http.ResponseWriter, r *http.Request) {
 	}
 	commonwriter.RespondOK(ctx, w)
 }
+
+func (h *OrderHandler) GetCustomerOrders(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	data, err := h.OrderUC.GetCustomerOrders(ctx)
+	if err != nil {
+		commonwriter.RespondError(ctx, w, err)
+		return
+	}
+	commonwriter.RespondOKWithData(ctx, w, data)
+
+}
