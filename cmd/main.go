@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"net/http"
 
 	"github.com/eifzed/antre-app/internal/config"
 	orderUC "github.com/eifzed/antre-app/internal/usecase/antre/order"
@@ -31,11 +30,11 @@ func main() {
 	cfg.Secretes = secrete
 	orderConn, err := createDBConnection(cfg.Secretes.Data.DBMaster.DSN, cfg.Secretes.Data.DBSlave.DSN)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 	antreConn, err := createDBConnection(cfg.Secretes.Data.DBMaster.DSN, cfg.Secretes.Data.DBSlave.DSN)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 	antreDB := antreRepo.NewDBConnection(antreConn)
 	orderDB := orderRepo.NewDBConnection(orderConn)
@@ -76,5 +75,5 @@ func main() {
 		AuthModule:  authHandler,
 	})
 	router := getRoute(modules)
-	log.Fatal(http.ListenAndServe(cfg.Server.HTTP.Address, router))
+	ListenAndServe(cfg.Server.HTTP.Address, router)
 }

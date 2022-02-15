@@ -8,6 +8,11 @@ server:
 toggle:
   enable_something: true
 
+environment:
+  is_local: true
+  is_debug: true
+  einhorn_fds: 3
+
 roles:
   developer: 
     id: 1

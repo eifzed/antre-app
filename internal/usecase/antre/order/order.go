@@ -3,7 +3,6 @@ package order
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/eifzed/antre-app/internal/config"
 	"github.com/eifzed/antre-app/internal/entity/order"
@@ -127,9 +126,6 @@ func (uc *OrderUC) GetCustomerOrders(ctx context.Context) (order.DtlOrderList, e
 	if !utility.RoleExistInSlice(uc.Config.Roles.Customer, userDetail.Roles) {
 		return result, commonerr.ErrorForbidden("user does not have customer role")
 	}
-	something := errors.New("testing")
-	something = nil
-	fmt.Println(something.Error())
 
 	dtlOrder, err := uc.OrderDB.GetDtlOrdersByCustomerID(ctx, userDetail.UserID)
 	if err != nil && !errors.Is(err, databaseerr.ErrorDataNotFound) {

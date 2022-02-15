@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/eifzed/antre-app/lib/common"
 	xdb "github.com/eifzed/antre-app/lib/database/xorm"
 	"github.com/eifzed/antre-app/lib/utility/jwt"
 )
@@ -32,7 +33,7 @@ func GetSecretes() *SecreteVault {
 	env := "production"
 	vaultPath := "/etc/antre-secrete/"
 
-	if IsDevelopment() {
+	if common.IsDevelopment() {
 		dir, _ := os.Getwd()
 		env = "development"
 		vaultPath = dir + "/files" + "/etc/antre-secrete/"
@@ -58,9 +59,4 @@ func GetSecretes() *SecreteVault {
 		log.Fatalln("Failed config vault nil on data")
 	}
 	return cfgVault
-}
-
-func IsDevelopment() bool {
-	// isLocal := os.Getenv("ISLOCAL")
-	return true
 }

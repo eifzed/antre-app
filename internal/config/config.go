@@ -47,7 +47,7 @@ func GetConfig() (*Config, error) {
 	env := "production"
 	pathBase := ""
 
-	if IsDevelopment() {
+	if common.IsDevelopment() {
 		env = "development"
 		dir, _ := os.Getwd()
 		pathBase = filepath.Join(dir, "files")
