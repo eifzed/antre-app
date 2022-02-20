@@ -9,6 +9,7 @@ type modules struct {
 	httpHandler *handler.HttpHandler
 	Config      *config.Config
 	AuthModule  handler.AuthModuleInterface
+	LogModule   handler.LogModuleInterface
 }
 
 func newModules(mod modules) *modules {

@@ -16,3 +16,7 @@ type antreHandlerInterface interface {
 type AuthModuleInterface interface {
 	AuthHandler(next http.Handler) http.Handler
 }
+
+type LogModuleInterface interface {
+	LogHandler(next http.Handler) http.Handler
+}
