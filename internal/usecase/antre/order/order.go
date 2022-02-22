@@ -62,9 +62,9 @@ func (uc *OrderUC) RegisterOrder(ctx context.Context, orderData order.OrderRegis
 	for i := range orderData.Orders {
 		orderData.Orders[i].OrderID = trxOrder.OrderID
 	}
-	err = uc.insertMapOrderGoodService(ctx, orderData)
+	err = uc.insertMapOrderProduct(ctx, orderData)
 	if err != nil {
-		return pkgErr.Wrap(err, wrapPrefixRegisterOrder+"insertMapOrderGoodService")
+		return pkgErr.Wrap(err, wrapPrefixRegisterOrder+"insertMapOrderProduct")
 	}
 
 	hstOrder := &order.HstOrder{
@@ -83,18 +83,18 @@ func (uc *OrderUC) RegisterOrder(ctx context.Context, orderData order.OrderRegis
 	return nil
 }
 
-func (uc *OrderUC) insertMapOrderGoodService(ctx context.Context, orderData order.OrderRegistration) error {
+func (uc *OrderUC) insertMapOrderProduct(ctx context.Context, orderData order.OrderRegistration) error {
 	if orderData.Orders == nil || len(orderData.Orders) == 0 {
 		return commonerr.ErrorBadRequest("order options", "empty order options")
 	}
 	goodServiceIDs := []int64{}
 	for _, o := range orderData.Orders {
-		goodServiceIDs = append(goodServiceIDs, o.GoodServiceID)
+		goodServiceIDs = append(goodServiceIDs, o.ProductID)
 	}
 	// validate that orders exist in shop options
-	goodServiceList, err := uc.OrderDB.GetMapShopGoodServiceByShopID(ctx, orderData.ShopID, goodServiceIDs...)
+	goodServiceList, err := uc.OrderDB.GetMapShopProductByShopID(ctx, orderData.ShopID, goodServiceIDs...)
 	if err != nil {
-		return pkgErr.Wrap(err, wrapPrefixRegisterOrder+"GetMapShopGoodServiceByShopID")
+		return pkgErr.Wrap(err, wrapPrefixRegisterOrder+"GetMapShopProductByShopID")
 	}
 	if len(goodServiceList) != len(goodServiceIDs) {
 		return commonerr.ErrorBadRequest("good/service id", "invalid good/service IDs")
@@ -103,16 +103,16 @@ func (uc *OrderUC) insertMapOrderGoodService(ctx context.Context, orderData orde
 	// get price of each good/service
 	for i, r := range orderData.Orders {
 		for _, o := range goodServiceList {
-			if r.GoodServiceID == o.ID {
+			if r.ProductID == o.ID {
 				orderData.Orders[i].PricePerItemIDR = o.PriceIDR
 				break
 			}
 		}
 	}
 
-	err = uc.OrderDB.InsertMapOrderGoodService(ctx, orderData.Orders...)
+	err = uc.OrderDB.InsertMapOrderProduct(ctx, orderData.Orders...)
 	if err != nil {
-		return pkgErr.Wrap(err, wrapPrefixRegisterOrder+"InsertMapOrderGoodService")
+		return pkgErr.Wrap(err, wrapPrefixRegisterOrder+"InsertMapOrderProduct")
 	}
 	return nil
 }
@@ -135,11 +135,11 @@ func (uc *OrderUC) GetCustomerOrders(ctx context.Context) (order.DtlOrderList, e
 		return result, nil
 	}
 	for i, dtl := range dtlOrder {
-		mapOrderGoodService, err := uc.OrderDB.GetMapOrderGoodServiceByOrderID(ctx, dtl.OrderID)
+		mapOrderProduct, err := uc.OrderDB.GetMapOrderProductByOrderID(ctx, dtl.OrderID)
 		if err != nil {
-			return result, pkgErr.Wrap(err, wrapPrefixGetUserOrders+"GetMapOrderGoodServiceByOrderID")
+			return result, pkgErr.Wrap(err, wrapPrefixGetUserOrders+"GetMapOrderProductByOrderID")
 		}
-		dtlOrder[i].Orders = mapOrderGoodService
+		dtlOrder[i].Orders = mapOrderProduct
 	}
 	result.TotalOrder = int64(len(dtlOrder))
 	result.OrderDetailList = dtlOrder

@@ -7,40 +7,40 @@ type ShopRegistration struct {
 	// CompanyID          int64               `json:"company_id" xorm:"company_id"`
 	// PICID              int64               `json:"pic_id" xorm:"pic_id"`
 	// OwnerID            int64               `json:"owner_id" xorm:"owner_id"`
-	ShopName           string              `json:"shop_name" xorm:"shop_name"`
-	ShopType           string              `json:"shop_type" xorm:"shop_type"`
-	ShopDescription    string              `json:"shop_description" xorm:"shop_description"`
-	Address            string              `json:"address" xorm:"address"`
-	ShopPictureURL     string              `json:"shop_picture_url" xorm:"shop_picture_url"`
-	PostalCode         int64               `json:"postal_code" xorm:"postal_code"`
-	GoodServiceOptions []GoodServiceOption `json:"good_service_options"`
-	OpenHour           int                 `json:"open_hour" xorm:"open_hour"`
-	CloseHour          int                 `json:"close_hour" xorm:"close_hour"`
-	CategoryLv0        int64               `json:"category_lv0" xorm:"category"`
-	CreateTime         time.Time           `xorm:"create_time created"`
-	UpdateTime         time.Time           `xorm:"update_time updated"`
-	DeleteTime         *time.Time          `xorm:"delete_time deleted"`
+	ShopName        string          `json:"shop_name" xorm:"shop_name"`
+	ShopType        string          `json:"shop_type" xorm:"shop_type"`
+	ShopDescription string          `json:"shop_description" xorm:"shop_description"`
+	Address         string          `json:"address" xorm:"address"`
+	ShopPictureURL  string          `json:"shop_picture_url" xorm:"shop_picture_url"`
+	PostalCode      int64           `json:"postal_code" xorm:"postal_code"`
+	ProductOptions  []ProductOption `json:"product_options"`
+	OpenHour        int             `json:"open_hour" xorm:"open_hour"`
+	CloseHour       int             `json:"close_hour" xorm:"close_hour"`
+	CategoryLv0     int64           `json:"category_lv0" xorm:"category"`
+	CreateTime      time.Time       `xorm:"create_time created"`
+	UpdateTime      time.Time       `xorm:"update_time updated"`
+	DeleteTime      *time.Time      `xorm:"delete_time deleted"`
 }
 
-type GoodServiceType string
+type ProductType string
 
 const (
-	GoodType    GoodServiceType = "good"
-	ServiceType GoodServiceType = "service"
+	GoodType    ProductType = "good"
+	ServiceType ProductType = "service"
 )
 
-type GoodServiceOption struct {
-	ID                 int64           `json:"id" xorm:"id pk autoincr"`
-	ShopID             int64           `json:"-" xorm:"shop_id"`
-	Type               GoodServiceType `json:"type" xorm:"type"`
-	Name               string          `json:"name" xorm:"name"`
-	Description        string          `json:"description" xorm:"description"`
-	PriceIDR           int64           `json:"price_idr" xorm:"price_idr"`
-	ProcessTimeMinutes int64           `json:"process_time_minutes" xorm:"process_time_minutes"`
-	PictureURL         string          `json:"picture_url" xorm:"picture_url"`
-	CreateTime         time.Time       `xorm:"create_time created"`
-	UpdateTime         time.Time       `xorm:"update_time updated"`
-	DeleteTime         *time.Time      `xorm:"delete_time deleted"`
+type ProductOption struct {
+	ID                 int64       `json:"id" xorm:"id pk autoincr"`
+	ShopID             int64       `json:"-" xorm:"shop_id"`
+	Type               ProductType `json:"type" xorm:"type"`
+	Name               string      `json:"name" xorm:"name"`
+	Description        string      `json:"description" xorm:"description"`
+	PriceIDR           int64       `json:"price_idr" xorm:"price_idr"`
+	ProcessTimeMinutes int64       `json:"process_time_minutes" xorm:"process_time_minutes"`
+	PictureURL         string      `json:"picture_url" xorm:"picture_url"`
+	CreateTime         time.Time   `xorm:"create_time created"`
+	UpdateTime         time.Time   `xorm:"update_time updated"`
+	DeleteTime         *time.Time  `xorm:"delete_time deleted"`
 }
 
 type DtlShop struct {

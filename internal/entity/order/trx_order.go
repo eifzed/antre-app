@@ -17,15 +17,15 @@ type TrxOrder struct {
 }
 
 type OrderRegistration struct {
-	ShopID       int64                  `json:"shop_id"`
-	Orders       []*MapOrderGoodService `json:"orders"`
-	CustomerNote string                 `json:"customer_note"`
+	ShopID       int64              `json:"shop_id"`
+	Orders       []*MapOrderProduct `json:"orders"`
+	CustomerNote string             `json:"customer_note"`
 }
 
-type MapOrderGoodService struct {
+type MapOrderProduct struct {
 	ID              int64      `json:"-" xorm:"id pk autoincr"`
 	OrderID         int64      `json:"-" xorm:"order_id"`
-	GoodServiceID   int64      `json:"good_service_id" xorm:"good_service_id"`
+	ProductID       int64      `json:"product_id" xorm:"product_id"`
 	Quantity        int        `json:"quantity" xorm:"quantity"`
 	Note            string     `json:"note" xorm:"note"`
 	PricePerItemIDR int64      `json:"-" xorm:"price_per_item_idr"`

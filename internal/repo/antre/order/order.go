@@ -29,7 +29,7 @@ func (con *Conn) GetOrderByID(ctx context.Context, orderID int64) (*order.TrxOrd
 	session := con.DB.Slave.Context(ctx).Table("ant_trx_order")
 	_, err := session.Where("order_id = ?", orderID).Get(data)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "GetOrderByID")
 	}
 	return data, nil
 }
@@ -41,7 +41,7 @@ func (con *Conn) InsertTrxOrder(ctx context.Context, order *order.TrxOrder) erro
 	}
 	count, err := session.Table("ant_trx_order").Insert(order)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "InsertTrxOrder")
 	}
 	if count == 0 {
 		return databaseerr.ErrorNoInsert
@@ -58,7 +58,8 @@ func (con *Conn) UpdateTrxOrderByID(ctx context.Context, orderID int64, order *o
 		Where("order_id = ?", orderID).
 		Update(&order)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "UpdateTrxOrderByID")
+
 	}
 	if count == 0 {
 		return databaseerr.ErrorNoInsert
@@ -70,7 +71,7 @@ func (con *Conn) GetTrxOrderByCustomerID(ctx context.Context, userID int64, stat
 	data := []order.TrxOrder{}
 	session := con.DB.Slave.Context(ctx).
 		Table(tblTrxOrder).Alias("trx").
-		Join("LEFT", tblMapOrderGoodService+" map", "trx.order_id = map.order_id")
+		Join("LEFT", tblMapOrderProduct+" map", "trx.order_id = map.order_id")
 	session = session.Where("customer_id = ?", userID)
 	if len(statusIDs) > 0 {
 		session.In("status_id", statusIDs)
@@ -78,7 +79,7 @@ func (con *Conn) GetTrxOrderByCustomerID(ctx context.Context, userID int64, stat
 
 	count, err := session.FindAndCount(data)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "GetTrxOrderByCustomerID")
 	}
 	if count == 0 {
 		return nil, databaseerr.ErrorDataNotFound
@@ -95,7 +96,7 @@ func (conn *Conn) GetDtlOrdersByCustomerID(ctx context.Context, costomerID int64
 		Select("trx.shop_id, shop.shop_name, status.status_name, trx.customer_note, trx.shop_note, trx.create_time, trx.order_id")
 	count, err := session.Where("customer_id = ?", costomerID).FindAndCount(&result)
 	if err != nil {
-		return nil, errors.Wrap(err, wrapPrefixGetOrdersByCustomerID)
+		return nil, errors.Wrap(err, "GetDtlOrdersByCustomerID")
 	}
 	if count == 0 {
 		return nil, databaseerr.ErrorDataNotFound

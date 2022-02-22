@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (conn *Conn) InsertMapOrderGoodService(ctx context.Context, orders ...*order.MapOrderGoodService) error {
+func (conn *Conn) InsertMapOrderProduct(ctx context.Context, orders ...*order.MapOrderProduct) error {
 	if len(orders) == 0 {
 		return nil
 	}
@@ -16,9 +16,9 @@ func (conn *Conn) InsertMapOrderGoodService(ctx context.Context, orders ...*orde
 	if session == nil {
 		session = conn.DB.Master.Context(ctx)
 	}
-	count, err := session.Table(tblMapOrderGoodService).Insert(orders)
+	count, err := session.Table(tblMapOrderProduct).Insert(orders)
 	if err != nil {
-		return errors.Wrap(err, wrapPrefixInsertMapOrderGoodService)
+		return errors.Wrap(err, "InsertMapOrderProduct")
 	}
 	if count == 0 {
 		return databaseerr.ErrorNoInsert
@@ -26,18 +26,18 @@ func (conn *Conn) InsertMapOrderGoodService(ctx context.Context, orders ...*orde
 	return nil
 }
 
-func (conn *Conn) GetMapOrderGoodServiceByOrderID(ctx context.Context, orderID int64) ([]order.MapOrderGoodService, error) {
-	mapOrderGoodServices := []order.MapOrderGoodService{}
+func (conn *Conn) GetMapOrderProductByOrderID(ctx context.Context, orderID int64) ([]order.MapOrderProduct, error) {
+	mapOrderProducts := []order.MapOrderProduct{}
 	session := conn.DB.Slave.Context(ctx)
 	session = session.
-		Table(tblMapOrderGoodService).
+		Table(tblMapOrderProduct).
 		Where("order_id = ?", orderID)
-	count, err := session.FindAndCount(&mapOrderGoodServices)
+	count, err := session.FindAndCount(&mapOrderProducts)
 	if err != nil {
-		return nil, errors.Wrap(err, wrapPrefixGetMapShopGoodServiceByShopID)
+		return nil, errors.Wrap(err, "GetMapOrderProductByOrderID")
 	}
 	if count == 0 {
 		return nil, databaseerr.ErrorDataNotFound
 	}
-	return mapOrderGoodServices, nil
+	return mapOrderProducts, nil
 }

@@ -10,9 +10,9 @@ type Order interface {
 	orderRegistration
 	hstOrder
 	dtlShop
-	mapGoodService
+	mapProduct
 	mapShopCategory
-	mapOrderGoodService
+	mapOrderProduct
 }
 
 type orderRegistration interface {
@@ -36,16 +36,16 @@ type dtlShop interface {
 	GetDtlShopByShopID(ctx context.Context, shopID int64) (*order.DtlShop, error)
 }
 
-type mapGoodService interface {
-	InsertMapShopGoodService(ctx context.Context, goodService ...order.GoodServiceOption) error
-	GetMapShopGoodServiceByShopID(ctx context.Context, shopID int64, goodServiceID ...int64) ([]order.GoodServiceOption, error)
+type mapProduct interface {
+	InsertMapShopProduct(ctx context.Context, goodService ...order.ProductOption) error
+	GetMapShopProductByShopID(ctx context.Context, shopID int64, goodServiceID ...int64) ([]order.ProductOption, error)
 }
 
 type mapShopCategory interface {
 	InsertMapShopCategory(ctx context.Context, shopCategory ...order.MapShopCategory) error
 }
 
-type mapOrderGoodService interface {
-	InsertMapOrderGoodService(ctx context.Context, orders ...*order.MapOrderGoodService) error
-	GetMapOrderGoodServiceByOrderID(ctx context.Context, orderID int64) ([]order.MapOrderGoodService, error)
+type mapOrderProduct interface {
+	InsertMapOrderProduct(ctx context.Context, orders ...*order.MapOrderProduct) error
+	GetMapOrderProductByOrderID(ctx context.Context, orderID int64) ([]order.MapOrderProduct, error)
 }

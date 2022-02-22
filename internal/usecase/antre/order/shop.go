@@ -51,9 +51,9 @@ func (uc *OrderUC) RegisterShop(ctx context.Context, shopRegistData order.ShopRe
 		}
 		shopRegistData.ShopID = dtlShop.ShopID
 
-		err = uc.insertShopGoodService(ctx, shopRegistData)
+		err = uc.insertShopProduct(ctx, shopRegistData)
 		if err != nil {
-			return pkgErr.Wrap(err, wrapPrefixRegisterShop+"insertShopGoodService")
+			return pkgErr.Wrap(err, wrapPrefixRegisterShop+"insertShopProduct")
 		}
 		err = uc.insertShopCategory(ctx, shopRegistData)
 		if err != nil {
@@ -79,14 +79,14 @@ func (uc *OrderUC) insertShopCategory(ctx context.Context, shopRegistData order.
 	return nil
 }
 
-func (uc *OrderUC) insertShopGoodService(ctx context.Context, shopRegistData order.ShopRegistration) error {
+func (uc *OrderUC) insertShopProduct(ctx context.Context, shopRegistData order.ShopRegistration) error {
 	shopID := shopRegistData.ShopID
-	for i := range shopRegistData.GoodServiceOptions {
-		shopRegistData.GoodServiceOptions[i].ShopID = shopID
+	for i := range shopRegistData.ProductOptions {
+		shopRegistData.ProductOptions[i].ShopID = shopID
 	}
-	err := uc.OrderDB.InsertMapShopGoodService(ctx, shopRegistData.GoodServiceOptions...)
+	err := uc.OrderDB.InsertMapShopProduct(ctx, shopRegistData.ProductOptions...)
 	if err != nil {
-		return pkgErr.Wrap(err, "insertShopGoodService.InsertMapShopGoodService")
+		return pkgErr.Wrap(err, "insertShopProduct.InsertMapShopProduct")
 	}
 	return nil
 }
