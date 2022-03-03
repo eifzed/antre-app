@@ -16,10 +16,11 @@ import (
 )
 
 const (
-	wrapPrefix              = "usecase.antre.order"
-	wrapPrefixRegisterShop  = wrapPrefix + "RegisterShop."
-	wrapPrefixRegisterOrder = wrapPrefix + "RegisterOrder."
-	wrapPrefixGetUserOrders = wrapPrefix + "GetUserOrders"
+	wrapPrefix                        = "usecase.antre.order"
+	wrapPrefixRegisterShop            = wrapPrefix + "RegisterShop."
+	wrapPrefixRegisterOrder           = wrapPrefix + "RegisterOrder."
+	wrapPrefixGetUserOrders           = wrapPrefix + "GetUserOrders."
+	wrapPrefixGetProductsListByShopID = wrapPrefix + "GetProductsListByShopID."
 )
 
 type OrderUC struct {

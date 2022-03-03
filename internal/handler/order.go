@@ -10,4 +10,7 @@ type orderHandlerInterface interface {
 
 	// shop handler
 	RegisterShop(w http.ResponseWriter, r *http.Request)
+
+	// product handler
+	GetProductsListByShopID(w http.ResponseWriter, r *http.Request)
 }

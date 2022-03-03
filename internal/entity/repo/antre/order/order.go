@@ -39,6 +39,7 @@ type dtlShop interface {
 type mapProduct interface {
 	InsertMapShopProduct(ctx context.Context, goodService ...order.ProductOption) error
 	GetMapShopProductByShopID(ctx context.Context, shopID int64, goodServiceID ...int64) ([]order.ProductOption, error)
+	GetProductsListByShopID(ctx context.Context, shopID int64) (*order.ProductsList, error)
 }
 
 type mapShopCategory interface {

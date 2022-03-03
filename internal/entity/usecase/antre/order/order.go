@@ -9,6 +9,7 @@ import (
 type OrderUCInterface interface {
 	orders
 	shop
+	product
 }
 
 type orders interface {
@@ -19,4 +20,8 @@ type orders interface {
 
 type shop interface {
 	RegisterShop(ctx context.Context, shopRegistData order.ShopRegistration) error
+}
+
+type product interface {
+	GetProductsListByShopID(ctx context.Context, shopID int64) (*order.ProductsList, error)
 }
