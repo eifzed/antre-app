@@ -36,7 +36,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Build Docker Image
       run: |
-        docker build --tag eifzed/antre_app:latest .
+        docker build --tag eifzed/antre-app:latest .
     - name: Push Docker Image
       run: |
-        docker push eifzed/antre_app:latest
+        docker push eifzed/antre-app:latest
