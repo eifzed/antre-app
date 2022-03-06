@@ -29,5 +29,5 @@ jobs:
       with:
         image: eifzed/antre-app
         registry: docker.io
-        username: ${{secretes.DOCKER_USERNAME}}
-        password: ${{secretes.DOCKER_PASSWORD}}
+        username: ${{secrets.DOCKER_USERNAME}}
+        password: ${{secrets.DOCKER_PASSWORD}}
