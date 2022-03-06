@@ -25,7 +25,7 @@ func MstRoleExistInSlice(item antre.MstRole, itemSlice []antre.MstRole) bool {
 
 func RoleExistInSlice(item jwt.Role, itemSlice []jwt.Role) bool {
 	for _, i := range itemSlice {
-		if i.Name == item.Name {
+		if i.ID == item.ID {
 			return true
 		}
 	}

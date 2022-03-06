@@ -23,3 +23,11 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+
+    - name: Build and push docker image
+      uses: mr-smithers-excellent/docker-build-push@v4
+      with:
+        image: eifzed/antre-app
+        registry: docker.io
+        username: ${{secretes.DOCKER_USERNAME}}
+        password: ${{secretes.DOCKER_PASSWORD}}
