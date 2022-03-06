@@ -40,3 +40,7 @@ jobs:
     - name: Push Docker Image
       run: |
         docker push eifzed/antre-app:latest
+    - name: Trigger Webhook
+      uses: joelwmale/webhook-action@master
+      env:
+        WEBHOOK_URL: ${{ secrets.WEBHOOK_URL  }}
